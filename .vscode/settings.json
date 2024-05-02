@@ -1,0 +1,9 @@
+{
+    "cSpell.words": [
+        "gameloop",
+        "pygame"
+    ],
+    "pylint.args": [
+        "--rcfile=.pylintrc"
+    ]
+}
