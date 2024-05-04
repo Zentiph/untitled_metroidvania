@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "gameloop",
+        "hitbox",
         "pygame"
     ],
     "pylint.args": [
