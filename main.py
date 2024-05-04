@@ -7,4 +7,5 @@ import sys
 
 import pygame
 
-import src
+import src.Entities
+import src.Internal
