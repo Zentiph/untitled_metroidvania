@@ -14,6 +14,7 @@ from src import Level
 pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Untitled Metroidvania.")
 
 plr: Entities.Player = Entities.Player(50, 0)
 platforms: List[Level.Surface] = [

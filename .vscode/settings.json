@@ -4,6 +4,7 @@
         "gameloop",
         "hitbox",
         "Keybinds",
+        "Metroidvania",
         "pygame",
         "Scancode"
     ],
