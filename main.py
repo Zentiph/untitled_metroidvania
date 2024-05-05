@@ -3,15 +3,13 @@
 The main module of the project. Runs the gameloop.
 """
 
-import sys
-
 import pygame
 
 import src.Entities as Entities
 import src.Internal as Internal
 import src.Level as Level
 
-import pygame
+pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 

@@ -55,7 +55,6 @@ class Player:
         self.xcor += self.speed * dt
 
     def jump(self) -> None:
-        # TODO: add more physics
         if self.on_ground:
             self.vertical_velocity -= 500
 
@@ -64,7 +63,6 @@ class Player:
         dt: int | float,
         platforms: List[Surface]
     ) -> None:
-        # TODO: handle gravity and other updates
         self.vertical_velocity += GRAVITY * dt
         self.ycor += self.vertical_velocity * dt
         self.on_ground = False
