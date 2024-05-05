@@ -2,6 +2,16 @@
 Indie game made for a CSP final project.
 
 
+Keybinds:
+---------
+
+W,A,S,D - Movement
+
+Space - Jump
+
+Escape - Close Window
+
+
 Developers:
 -----------
 

@@ -3,6 +3,7 @@
         "blit",
         "gameloop",
         "hitbox",
+        "Keybinds",
         "pygame"
     ],
     "pylint.args": [
