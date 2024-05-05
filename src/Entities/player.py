@@ -102,11 +102,12 @@ class Player:
 
         # floor collision
         for platform in platforms:
-            if self.ycor < platform.ycor and self.ycor > platform.ycor - platform.height:
+            if self.ycor + self.height > platform.ycor \
+                    and self.ycor < platform.ycor + platform.height:
                 if (self.xcor + self.width > platform.xcor) \
                         and (self.xcor < platform.xcor + platform.width):
 
-                    self.ycor = platform.ycor - platform.height
+                    self.ycor = platform.ycor - self.height
                     self.vertical_velocity = 0
                     self.on_ground = True
 

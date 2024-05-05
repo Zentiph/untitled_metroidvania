@@ -13,11 +13,11 @@ pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 
-plr = Entities.Player(50, 300)
+plr = Entities.Player(50, 0)
 platforms = [
-    Level.Surface(0, 500, 200, 50, True, True, True, True),
-    Level.Surface(200, 400, 200, 50, True, True, True, True),
-    Level.Surface(600, 200, 200, 50, True, True, True, True),
+    Level.Surface(0, 500, 200, 50, is_floor=True),
+    Level.Surface(200, 400, 200, 100, is_floor=True),
+    Level.Surface(600, 200, 200, 10, is_floor=True),
 ]
 
 while True:
@@ -26,7 +26,7 @@ while True:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            break
+            pygame.quit()
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
@@ -45,5 +45,3 @@ while True:
     for platform in platforms:
         platform.draw(screen)
     pygame.display.flip()
-
-pygame.quit()
