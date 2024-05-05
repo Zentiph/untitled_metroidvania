@@ -36,7 +36,7 @@ class Player:
         self.width = 50
         self.height = 50
 
-        self.speed = 1
+        self.speed = 250
         self.vertical_velocity = 0
         self.on_ground = False
 
@@ -57,7 +57,7 @@ class Player:
     def jump(self) -> None:
         # TODO: add more physics
         if self.on_ground:
-            self.vertical_velocity -= 0.5
+            self.vertical_velocity -= 500
 
     def update(
         self,
@@ -71,11 +71,11 @@ class Player:
 
         # floor collision
         for platform in platforms:
-            if self.ycor + self.height == platform.ycor:
+            if self.ycor < platform.ycor and self.ycor > platform.ycor - platform.height:
                 if (self.xcor + self.width > platform.xcor) \
                         and (self.xcor < platform.xcor + platform.width):
 
-                    self.ycor = platform.ycor - self.height
+                    self.ycor = platform.ycor - platform.height
                     self.vertical_velocity = 0
                     self.on_ground = True
 
