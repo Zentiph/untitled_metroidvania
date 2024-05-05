@@ -46,15 +46,35 @@ class Player:
         self,
         dt: int | float
     ) -> None:
+        """Moves the player left.
+
+        :param dt: Delta time.
+        :type dt: int | float
+        """
+
+        check_type(dt, int, float)
         self.xcor -= self.speed * dt
 
     def move_right(
         self,
         dt: int | float
     ) -> None:
+        """Moves the player right.
+
+        :param dt: Delta time.
+        :type dt: int | float
+        """
+
+        check_type(dt, int, float)
         self.xcor += self.speed * dt
 
     def jump(self) -> None:
+        """Increases the player's vertical velocity.
+
+        :param dt: Delta time.
+        :type dt: int | float
+        """
+
         if self.on_ground:
             self.vertical_velocity -= 500
 
@@ -63,6 +83,19 @@ class Player:
         dt: int | float,
         platforms: List[Surface]
     ) -> None:
+        """Runs update checks on the player.
+
+        :param dt: Delta time.
+        :type dt: int | float
+        :param platforms: A list of platforms necessary for collision checks.
+        :type platforms: List[Surface]
+        """
+
+        check_type(dt, int, float)
+        check_type(platforms, list)
+        for platform in platforms:
+            check_type(platform, Surface)
+
         self.vertical_velocity += GRAVITY * dt
         self.ycor += self.vertical_velocity * dt
         self.on_ground = False
@@ -81,6 +114,14 @@ class Player:
         self,
         screen: pygame.Surface
     ) -> None:
+        """Draws the player to the screen.
+
+        :param screen: The screen to draw on.
+        :type screen: pygame.Surface
+        """
+
+        check_type(screen, pygame.Surface)
+
         pygame.draw.rect(
             screen,
             self.color,

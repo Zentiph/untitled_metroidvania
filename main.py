@@ -5,9 +5,9 @@ The main module of the project. Runs the gameloop.
 
 import pygame
 
-import src.Entities as Entities
-import src.Internal as Internal
-import src.Level as Level
+from src import Entities
+from src import Internal
+from src import Level
 
 pygame.init()
 
