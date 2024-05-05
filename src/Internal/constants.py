@@ -3,4 +3,5 @@
 Module containing useful constants to be used throughout the project.
 """
 
-GRAVITY = 500  # in pixels per second squared (px/sec^2)
+# in pixels per second squared (px/sec^2)
+GRAVITY_ACCELERATION: int | float = 500

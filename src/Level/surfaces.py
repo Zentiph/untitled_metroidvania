@@ -3,6 +3,8 @@
 Module containing surface functionality.
 """
 
+from typing import Tuple
+
 import pygame
 
 from ..Internal import check_type
@@ -54,17 +56,17 @@ class Surface:
         check_type(is_right_wall, bool)
         check_type(is_ceiling, bool)
 
-        self.xcor = xcor
-        self.ycor = ycor
-        self.width = width
-        self.height = height
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.width: int | float = width
+        self.height: int | float = height
 
-        self.is_floor = is_floor
-        self.is_left_wall = is_left_wall
-        self.is_right_wall = is_right_wall
-        self.is_ceiling = is_ceiling
+        self.is_floor: bool = is_floor
+        self.is_left_wall: bool = is_left_wall
+        self.is_right_wall: bool = is_right_wall
+        self.is_ceiling: bool = is_ceiling
 
-        self.color = (0, 0, 255)
+        self.color: Tuple[int] = (0, 0, 255)
 
     def draw(
         self,

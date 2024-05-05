@@ -3,6 +3,8 @@
 The main module of the project. Runs the gameloop.
 """
 
+from typing import List
+
 import pygame
 
 from src import Entities
@@ -11,10 +13,10 @@ from src import Level
 
 pygame.init()
 
-screen = pygame.display.set_mode((800, 600))
+screen: pygame.Surface = pygame.display.set_mode((800, 600))
 
-plr = Entities.Player(50, 0)
-platforms = [
+plr: Entities.Player = Entities.Player(50, 0)
+platforms: List[Level.Surface] = [
     Level.Surface(0, 500, 200, 50, is_floor=True),
     Level.Surface(200, 400, 200, 100, is_floor=True),
     Level.Surface(600, 200, 200, 10, is_floor=True),
@@ -22,13 +24,13 @@ platforms = [
 
 while True:
     # limits the game to 60fps and gets the time delta
-    dt = pygame.time.Clock().tick(60) / 1000.0
+    dt: float = pygame.time.Clock().tick(60) / 1000.0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
 
-    keys = pygame.key.get_pressed()
+    keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
     if keys[pygame.K_a]:
         plr.move_left(dt)
     if keys[pygame.K_d]:

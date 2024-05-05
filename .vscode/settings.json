@@ -4,7 +4,8 @@
         "gameloop",
         "hitbox",
         "Keybinds",
-        "pygame"
+        "pygame",
+        "Scancode"
     ],
     "pylint.args": [
         "--rcfile=.pylintrc"

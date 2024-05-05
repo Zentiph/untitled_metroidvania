@@ -3,10 +3,10 @@
 Module containing player related functionality.
 """
 
-from typing import List
+from typing import List, Tuple
 
 import pygame
-from ..Internal import check_type, GRAVITY
+from ..Internal import check_type, GRAVITY_ACCELERATION
 from ..Level import Surface
 
 
@@ -31,16 +31,16 @@ class Player:
         check_type(xcor, int, float)
         check_type(ycor, int, float)
 
-        self.xcor = xcor
-        self.ycor = ycor
-        self.width = 50
-        self.height = 50
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.width: int | float = 50
+        self.height: int | float = 50
 
-        self.speed = 250
-        self.vertical_velocity = 0
-        self.on_ground = False
+        self.speed: int | float = 250
+        self.vertical_velocity: int | float = 0
+        self.on_ground: bool = False
 
-        self.color = (255, 0, 0)
+        self.color: Tuple[int] = (255, 0, 0)
 
     def move_left(
         self,
@@ -96,7 +96,7 @@ class Player:
         for platform in platforms:
             check_type(platform, Surface)
 
-        self.vertical_velocity += GRAVITY * dt
+        self.vertical_velocity += GRAVITY_ACCELERATION * dt
         self.ycor += self.vertical_velocity * dt
         self.on_ground = False
 
