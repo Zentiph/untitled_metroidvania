@@ -18,15 +18,10 @@ pygame.display.set_caption("Untitled Metroidvania.")
 
 plr: Entities.Player = Entities.Player(50, 0)
 platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 200, 50,
-                  floor_collision=True,
-                  left_wall_collision=True),
-    Level.Surface(200, 400, 200, 100,
-                  floor_collision=True,
-                  left_wall_collision=True),
-    Level.Surface(600, 200, 200, 10,
-                  floor_collision=True,
-                  left_wall_collision=True),
+    Level.Surface(0, 500, 200, 50, True, True, True, True),
+    Level.Surface(200, 400, 200, 200, True, True, True, True),
+    Level.Surface(400, 500, 200, 10, True, True, True, True),
+    Level.Surface(0, 300, 200, 50, True, True, True, True)
 ]
 
 while True:
@@ -43,7 +38,7 @@ while True:
     if keys[pygame.K_d]:
         plr.move_right(dt)
     if keys[pygame.K_SPACE] or keys[pygame.K_w]:
-        plr.jump(dt)
+        plr.jump()
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
