@@ -20,10 +20,10 @@ class Surface:
         ycor: int | float,
         width: int | float,
         height: int | float,
-        is_floor: bool = False,
-        is_left_wall: bool = False,
-        is_right_wall: bool = False,
-        is_ceiling: bool = False
+        floor_collision: bool = False,
+        left_wall_collision: bool = False,
+        right_wall_collision: bool = False,
+        ceiling_collision: bool = False
     ) -> None:
         """Initializer for all surface objects.
 
@@ -35,14 +35,14 @@ class Surface:
         :type width: int | float
         :param height: The height of the surface.
         :type height: int | float
-        :param is_floor: Whether the surface will have floor collision.
-        :type is_floor: bool, optional
-        :param is_left_wall: Whether the surface will have left wall collision.
-        :type is_left_wall: bool, optional
-        :param is_right_wall: Whether the surface will have right wall collision.
-        :type is_right_wall: bool, optional
-        :param is_ceiling: Whether the surface will have ceiling collision.
-        :type is_ceiling: bool, optional
+        :param floor_collision: Whether the surface will have floor collision.
+        :type floor_collision: bool, optional
+        :param left_wall_collision: Whether the surface will have left wall collision.
+        :type left_wall_collision: bool, optional
+        :param right_wall_collision: Whether the surface will have right wall collision.
+        :type right_wall_collision: bool, optional
+        :param ceiling_collision: Whether the surface will have ceiling collision.
+        :type ceiling_collision: bool, optional
         """
 
         # type checks
@@ -51,20 +51,20 @@ class Surface:
         check_type(width, int, float)
         check_type(height, int, float)
 
-        check_type(is_floor, bool)
-        check_type(is_left_wall, bool)
-        check_type(is_right_wall, bool)
-        check_type(is_ceiling, bool)
+        check_type(floor_collision, bool)
+        check_type(left_wall_collision, bool)
+        check_type(right_wall_collision, bool)
+        check_type(ceiling_collision, bool)
 
         self.xcor: int | float = xcor
         self.ycor: int | float = ycor
         self.width: int | float = width
         self.height: int | float = height
 
-        self.is_floor: bool = is_floor
-        self.is_left_wall: bool = is_left_wall
-        self.is_right_wall: bool = is_right_wall
-        self.is_ceiling: bool = is_ceiling
+        self.floor_collision: bool = floor_collision
+        self.left_wall_collision: bool = left_wall_collision
+        self.right_wall_collision: bool = right_wall_collision
+        self.ceiling_collision: bool = ceiling_collision
 
         self.color: Tuple[int] = (0, 0, 255)
 

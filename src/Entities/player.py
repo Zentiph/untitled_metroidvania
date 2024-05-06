@@ -37,7 +37,8 @@ class Player:
         self.height: int | float = 50
 
         self.speed: int | float = 250
-        self.vertical_velocity: int | float = 0
+        self.x_vel: int | float = 0
+        self.y_vel: int | float = 0
         self.on_ground: bool = False
 
         self.color: Tuple[int] = (255, 0, 0)
@@ -68,7 +69,10 @@ class Player:
         check_type(dt, int, float)
         self.xcor += self.speed * dt
 
-    def jump(self) -> None:
+    def jump(
+        self,
+        dt: int | float
+    ) -> None:
         """Increases the player's vertical velocity.
 
         :param dt: Delta time.
@@ -76,7 +80,47 @@ class Player:
         """
 
         if self.on_ground:
-            self.vertical_velocity -= 500
+            self.y_vel -= 500
+            self.on_ground = False
+
+    def check_collision(
+        self,
+        platforms: List[Surface]
+    ) -> None:
+        """Run checks on the Player's collisions with other objects.
+
+        :param surfaces: A list of surfaces necessary for collision checks.
+        :type surfaces: List[Surface]
+        :param x_vel: The x velocity of the player.
+        :type x_vel: int | float
+        :param y_vel: The y velocity of the player.
+        :type y_vel: int | float
+        """
+
+        check_type(platforms, list)
+
+        for platform in platforms:
+            check_type(platform, Surface)
+
+            # left walls
+            if platform.left_wall_collision:
+                if self.xcor + self.width > platform.xcor \
+                        and self.xcor < platform.xcor:
+                    if (self.ycor + self.height > platform.ycor + 5) \
+                            and (self.ycor < platform.ycor + platform.height - 5):
+
+                        self.xcor = platform.xcor - self.width
+
+            # floors
+            if platform.floor_collision:
+                if self.ycor + self.height > platform.ycor - 1 \
+                        and self.ycor < platform.ycor + platform.height + 1:
+                    if (self.xcor + self.width > platform.xcor) \
+                            and (self.xcor < platform.xcor + platform.width):
+
+                        self.ycor = platform.ycor - self.height
+                        self.y_vel = 0
+                        self.on_ground = True
 
     def update(
         self,
@@ -91,25 +135,11 @@ class Player:
         :type platforms: List[Surface]
         """
 
-        check_type(dt, int, float)
-        check_type(platforms, list)
-        for platform in platforms:
-            check_type(platform, Surface)
+        self.check_collision(platforms)
 
-        self.vertical_velocity += GRAVITY_ACCELERATION * dt
-        self.ycor += self.vertical_velocity * dt
+        self.y_vel += GRAVITY_ACCELERATION * dt
+        self.ycor += self.y_vel * dt
         self.on_ground = False
-
-        # floor collision
-        for platform in platforms:
-            if self.ycor + self.height > platform.ycor \
-                    and self.ycor < platform.ycor + platform.height:
-                if (self.xcor + self.width > platform.xcor) \
-                        and (self.xcor < platform.xcor + platform.width):
-
-                    self.ycor = platform.ycor - self.height
-                    self.vertical_velocity = 0
-                    self.on_ground = True
 
     def draw(
         self,
