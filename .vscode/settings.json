@@ -6,7 +6,8 @@
         "Keybinds",
         "Metroidvania",
         "pygame",
-        "Scancode"
+        "Scancode",
+        "screeninfo"
     ],
     "pylint.args": [
         "--rcfile=.pylintrc"
