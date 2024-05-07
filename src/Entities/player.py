@@ -96,30 +96,38 @@ class Player:
         for platform in platforms:
             check_type(platform, Surface)
 
-            # horizontal collisions checks (left and right walls)
-            if self.ycor + self.height - 1 > platform.ycor and self.ycor + 1 < platform.ycor + platform.height:
-                if platform.left_wall_collision:
-                    if self.xcor + self.width > platform.xcor and self.xcor < platform.xcor:
-                        self.xcor = platform.xcor - self.width
-
-                if platform.right_wall_collision:
-                    if self.xcor < platform.xcor + platform.width and self.xcor + self.width > platform.xcor + platform.width:
-                        self.xcor = platform.xcor + platform.width
+            floor = platform.floor
+            ceil = platform.ceiling
+            lt_wall = platform.left_wall
+            rt_wall = platform.right_wall
 
             # vertical collisions checks (floor and ceiling)
-            if self.xcor + self.width > platform.xcor and self.xcor < platform.xcor + platform.width:
-                if platform.floor_collision:
-                    floor_contact_height = platform.ycor - self.height
-                    if self.ycor > floor_contact_height and self.ycor < platform.ycor:
-                        self.ycor = floor_contact_height
-                        self.y_vel = 0
-                        self.on_ground = True
+            if floor and self.xcor + self.width > floor.xcor \
+                    and self.xcor < floor.xcor + floor.width:
+                if self.ycor + self.height > floor.ycor and self.ycor < floor.ycor:
+                    # if more than 1/5 of the player's height is below the floor, let them drop
+                    if self.ycor + self.height - floor.ycor < self.height / 5:
+                        if self.y_vel > 0:  # if the player is moving downwards
+                            self.ycor = floor.ycor - self.height
+                            self.y_vel = 0
+                            self.on_ground = True
 
-                if platform.ceiling_collision:
-                    ceiling_contact_height = platform.ycor + platform.height
-                    if self.ycor < ceiling_contact_height and self.ycor + self.height > platform.ycor:
-                        self.ycor = ceiling_contact_height
+            if ceil and self.xcor + self.width > ceil.xcor and self.xcor < ceil.xcor + ceil.width:
+                if self.ycor + self.height > ceil.ycor and self.ycor < ceil.ycor:
+                    if self.y_vel < 0:  # if the player is moving upwards
+                        self.ycor = ceil.ycor
                         self.y_vel = 0
+
+            # horizontal collisions checks (left and right walls)
+            if lt_wall and self.ycor + self.height > lt_wall.ycor \
+                    and self.ycor < lt_wall.ycor + lt_wall.height:
+                if self.xcor + self.width > lt_wall.xcor and self.xcor < lt_wall.xcor:
+                    self.xcor = lt_wall.xcor - self.width
+
+            if rt_wall and self.ycor + self.height > rt_wall.ycor \
+                    and self.ycor < rt_wall.ycor + rt_wall.height:
+                if self.xcor + self.width > rt_wall.xcor and self.xcor < rt_wall.xcor:
+                    self.xcor = rt_wall.xcor
 
             '''# check floor collisions first
             if platform.floor_collision:

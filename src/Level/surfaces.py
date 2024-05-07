@@ -10,8 +10,128 @@ import pygame
 from ..Internal import check_type
 
 
+class Floor:
+    """Floor class. Should be passed to Surface to make a surface.
+    """
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        width: int | float,
+    ) -> None:
+        """Initializer for Floor objects.
+
+        :param x: The x position of the floor.
+        :type x: int | float
+        :param y: The y position of the floor.
+        :type y: int | float
+        :param width: The width of the floor.
+        :type width: int | float
+        """
+
+        # type checks
+        check_type(xcor, int, float)
+        check_type(ycor, int, float)
+        check_type(width, int, float)
+
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.width: int | float = width
+
+
+class Ceiling:
+    """Ceiling class. Should be passed to Surface to make a surface.
+    """
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        width: int | float,
+    ) -> None:
+        """Initializer for Floor objects.
+
+        :param x: The x position of the floor.
+        :type x: int | float
+        :param y: The y position of the floor.
+        :type y: int | float
+        :param width: The width of the floor.
+        :type width: int | float
+        """
+
+        # type checks
+        check_type(xcor, int, float)
+        check_type(ycor, int, float)
+        check_type(width, int, float)
+
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.width: int | float = width
+
+
+class LtWall:
+    """Left wall class. Should be passed to Surface to make a surface.
+    """
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        height: int | float,
+    ) -> None:
+        """Initializer for Floor objects.
+
+        :param x: The x position of the floor.
+        :type x: int | float
+        :param y: The y position of the floor.
+        :type y: int | float
+        :param height: The height of the floor.
+        :type height: int | float
+        """
+
+        # type checks
+        check_type(xcor, int, float)
+        check_type(ycor, int, float)
+        check_type(height, int, float)
+
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.height: int | float = height
+
+
+class RtWall:
+    """Right wall class. Should be passed to Surface to make a surface.
+    """
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        height: int | float,
+    ) -> None:
+        """Initializer for Floor objects.
+
+        :param x: The x position of the floor.
+        :type x: int | float
+        :param y: The y position of the floor.
+        :type y: int | float
+        :param height: The height of the floor.
+        :type height: int | float
+        """
+
+        # type checks
+        check_type(xcor, int, float)
+        check_type(ycor, int, float)
+        check_type(height, int, float)
+
+        self.xcor: int | float = xcor
+        self.ycor: int | float = ycor
+        self.height: int | float = height
+
+
 class Surface:
-    """Base class for all surface objects.
+    """Class used to create surface objects.
     """
 
     def __init__(
@@ -25,7 +145,7 @@ class Surface:
         right_wall_collision: bool = False,
         ceiling_collision: bool = False
     ) -> None:
-        """Initializer for all surface objects.
+        """Initializer for Surface objects.
 
         :param x: The x position of the surface.
         :type x: int | float
@@ -67,6 +187,31 @@ class Surface:
         self.ceiling_collision: bool = ceiling_collision
 
         self.color: Tuple[int] = (0, 0, 255)
+
+        if self.floor_collision:
+            self.floor = Floor(self.xcor, self.ycor, self.width)
+        else:
+            self.floor = None
+
+        if self.ceiling_collision:
+            self.ceiling = Ceiling(
+                self.xcor, self.ycor + self.height, self.width)
+        else:
+            self.ceiling = None
+
+        if self.left_wall_collision:
+            # the 0.5 and 1 added in are to add a buffer zone so
+            # wall collisions don't affect floor and ceiling collisions
+            self.left_wall = LtWall(
+                self.xcor, self.ycor + 2.5, self.height - 5)
+        else:
+            self.left_wall = None
+
+        if self.right_wall_collision:
+            self.right_wall = RtWall(
+                self.xcor + self.width, self.ycor + 2.5, self.height - 5)
+        else:
+            self.right_wall = None
 
     def draw(
         self,

@@ -17,10 +17,9 @@ screen: pygame.Surface = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Untitled Metroidvania.")
 
 plr: Entities.Player = Entities.Player(50, 0)
-platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 200, 50, True, True, True, True),
-    Level.Surface(200, 400, 200, 200, True, True, True, True),
-    Level.Surface(400, 500, 200, 10, True, True, True, True),
+collision_platforms: List[Level.Surface] = [
+    Level.Surface(0, 500, 800, 50, True, True, True, True),
+    Level.Surface(400, 400, 200, 200, True, True, True, True),
     Level.Surface(0, 300, 200, 50, True, True, True, True)
 ]
 
@@ -42,10 +41,10 @@ while True:
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
-    plr.update(dt, platforms)
+    plr.update(dt, collision_platforms)
 
     screen.fill((255, 255, 255))
     plr.draw(screen)
-    for platform in platforms:
+    for platform in collision_platforms:
         platform.draw(screen)
     pygame.display.flip()
