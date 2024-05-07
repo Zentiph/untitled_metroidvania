@@ -91,8 +91,7 @@ def check_range(
     if not in_range:
         if raise_exception:
             raise e_type(
-                f"{value} is not in the range of range({min_value}, {
-                    max_value})"
+                f"{value} is not in range({min_value}, {max_value})"
             )
         return False
     return True
