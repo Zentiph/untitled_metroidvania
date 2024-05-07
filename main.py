@@ -25,7 +25,7 @@ collision_platforms: List[Level.Surface] = [
 
 while True:
     # limits the game to 60fps and gets the time delta
-    dt: float = pygame.time.Clock().tick(60) / 1000.0
+    dt: float = pygame.time.Clock().tick_busy_loop(60) / 1000.0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
