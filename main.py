@@ -13,14 +13,14 @@ from src import Entities, Internal, Level
 
 
 MONITOR = get_monitors()[0]
-screen_width = 800
-screen_height = 600
-window_x: int = MONITOR.width / 2 - screen_width / 2
-window_y: int = MONITOR.height / 2 - screen_height / 2
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (window_x, window_y)
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+WINDOW_X: int = MONITOR.width / 2 - SCREEN_WIDTH / 2
+WINDOW_Y: int = MONITOR.height / 2 - SCREEN_HEIGHT / 2
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WINDOW_X, WINDOW_Y)
 pygame.init()
 
-screen: pygame.Surface = pygame.display.set_mode((screen_width, screen_height))
+screen: pygame.Surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Untitled Metroidvania.")
 
 plr: Entities.Player = Entities.Player(50, 0)
@@ -47,8 +47,6 @@ while True:
         plr.jump()
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
-    if keys[pygame.K_y]:
-        screen = pygame.display.set_mode((1920, 1080))
 
     plr.update(dt, collision_platforms)
 
