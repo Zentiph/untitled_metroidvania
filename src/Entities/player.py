@@ -129,56 +129,6 @@ class Player:
                 if self.xcor + self.width > rt_wall.xcor and self.xcor < rt_wall.xcor:
                     self.xcor = rt_wall.xcor
 
-            '''# check floor collisions first
-            if platform.floor_collision:
-                if self.ycor + self.height > platform.ycor \
-                        and self.ycor < platform.ycor + platform.height:
-
-                    if (self.xcor + self.width > platform.xcor) \
-                            and (self.xcor < platform.xcor + platform.width):
-
-                        self.ycor = platform.ycor - self.height
-                        self.y_vel = 0
-                        self.on_ground = True
-
-            # then left walls
-            if platform.left_wall_collision:
-                if self.xcor + self.width > platform.xcor \
-                        and self.xcor < platform.xcor:
-
-                    # the + 1 and - 1 are height buffer zones where the wall collision wont happen
-                    # this prevents buggy behavior where the player is forced to the side of the
-                    # surface when on top of it and near the edge
-                    if (self.ycor + self.height > platform.ycor + 1) \
-                            and (self.ycor < platform.ycor + platform.height - 1):
-
-                        self.xcor = platform.xcor - self.width
-
-            # then right walls
-            if platform.right_wall_collision:
-                if self.xcor + self.width > platform.xcor + platform.width \
-                        and self.xcor < platform.xcor + platform.width:
-
-                    # same idea here as above with the buffer zone
-                    if (self.ycor + self.height > platform.ycor + 1) \
-                            and (self.ycor < platform.ycor + platform.height - 1):
-
-                        self.xcor = platform.xcor + platform.width
-
-            # then ceilings
-            if platform.ceiling_collision:
-                if self.ycor < platform.ycor + platform.height \
-                        and self.ycor + self.height > platform.ycor:
-                    if (self.xcor + self.width > platform.xcor) \
-                            and (self.xcor < platform.xcor + platform.width):
-
-                        self.ycor = platform.ycor + platform.height
-                        self.y_vel = 0'''
-
-            # finally, if the player is inside the surface but
-            # no collision is detected, bring them to the top of the surface
-            # (i'm sure this won't cause issues later, right?)
-
     def update(
         self,
         dt: int | float,
