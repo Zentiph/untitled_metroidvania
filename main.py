@@ -51,6 +51,10 @@ while True:
         plr.health -= 1
     if keys[pygame.K_y]:
         plr.health += 1
+    if keys[pygame.K_u]:
+        plr.maxhealth -= 1
+    if keys[pygame.K_i]:
+        plr.maxhealth += 1
 
     plr.update(dt, collision_platforms)
 
