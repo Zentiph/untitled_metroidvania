@@ -27,7 +27,16 @@ screen: pygame.Surface = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Untitled Metroidvania.")
 
 # set the player and collision platforms
-plr: Entities.Player = Entities.Player(50, 0)
+plr: Entities.Player = Entities.Player(
+    50,
+    0,
+    50,
+    80,
+    250,
+    10,
+    10,
+    (255, 0, 0)
+)
 collision_platforms: List[Level.Surface] = [
     Level.Surface(0, 500, 800, 50, True, True, True, True),
     Level.Surface(400, 400, 200, 200, True, True, True, True),
