@@ -7,10 +7,9 @@ import os
 from typing import List
 
 import pygame
-
 from screeninfo import get_monitors
-from src import Entities, Internal, Level, GUI
 
+from src import GUI, Entities, Internal, Level
 
 MONITOR = get_monitors()[0]
 SCREEN_WIDTH = 800
@@ -32,7 +31,7 @@ collision_platforms: List[Level.Surface] = [
 
 while True:
 
-    GUI.healthBar_create(screen, 0, SCREEN_HEIGHT-30)
+    GUI.healthBar(screen, 0, SCREEN_HEIGHT-30)
 
     # limits the game to 60fps and gets the time delta
     dt: float = pygame.time.Clock().tick_busy_loop(60) / 1000.0
