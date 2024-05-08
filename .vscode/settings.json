@@ -2,8 +2,10 @@
     "cSpell.words": [
         "blit",
         "gameloop",
+        "healthbar",
         "hitbox",
         "Keybinds",
+        "maxhealth",
         "Metroidvania",
         "pygame",
         "Scancode",

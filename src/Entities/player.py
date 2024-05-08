@@ -42,6 +42,9 @@ class Player:
         self.on_ground: bool = False
 
         self.color: Tuple[int] = (255, 0, 0)
+        
+        self.health: int | float = 10
+        self.maxhealth: int | float = 10
 
     def move_left(
         self,

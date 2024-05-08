@@ -31,8 +31,6 @@ collision_platforms: List[Level.Surface] = [
 
 while True:
 
-    GUI.HealthBar(screen, 0, SCREEN_HEIGHT-30)
-
     # limits the game to 60fps and gets the time delta
     dt: float = pygame.time.Clock().tick_busy_loop(60) / 1000.0
 
@@ -49,6 +47,10 @@ while True:
         plr.jump()
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
+    if keys[pygame.K_t]:
+        plr.health -= 1
+    if keys[pygame.K_y]:
+        plr.health += 1
 
     plr.update(dt, collision_platforms)
 
@@ -56,4 +58,7 @@ while True:
     plr.draw(screen)
     for platform in collision_platforms:
         platform.draw(screen)
+
+    GUI.HealthBar(screen, 0, SCREEN_HEIGHT-30, plr)
+
     pygame.display.flip()
