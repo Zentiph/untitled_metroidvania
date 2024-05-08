@@ -3,4 +3,4 @@
 GUI contains various functions used in most menus and graphical interfaces.
 """
 
-from .player_ui import healthBar
+from .player_ui import HealthBar
