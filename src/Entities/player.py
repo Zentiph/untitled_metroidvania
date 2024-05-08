@@ -34,12 +34,15 @@ class Player:
         self.xcor: int | float = xcor
         self.ycor: int | float = ycor
         self.width: int | float = 50
-        self.height: int | float = 50
+        self.height: int | float = 80
 
         self.speed: int | float = 250
         self.x_vel: int | float = 0
         self.y_vel: int | float = 0
         self.on_ground: bool = False
+
+        self.health: int | float = 5
+        self.max_health: int | float = 5
 
         self.color: Tuple[int] = (255, 0, 0)
 
@@ -77,7 +80,7 @@ class Player:
             self.y_vel -= 500
             self.on_ground = False
 
-    def check_collision(
+    def check_surface_collision(
         self,
         platforms: List[Surface]
     ) -> None:
@@ -105,8 +108,8 @@ class Player:
             if floor and self.xcor + self.width > floor.xcor \
                     and self.xcor < floor.xcor + floor.width:
                 if self.ycor + self.height > floor.ycor and self.ycor < floor.ycor:
-                    # if more than 1/5 of the player's height is below the floor, let them drop
-                    if self.ycor + self.height - floor.ycor < self.height / 5:
+                    # if more than 1/10 of the player's height is below the floor, let them drop
+                    if self.ycor + self.height - floor.ycor < self.height / 10:
                         if self.y_vel > 0:  # if the player is moving downwards
                             self.ycor = floor.ycor - self.height
                             self.y_vel = 0
@@ -114,9 +117,13 @@ class Player:
 
             if ceil and self.xcor + self.width > ceil.xcor and self.xcor < ceil.xcor + ceil.width:
                 if self.ycor + self.height > ceil.ycor and self.ycor < ceil.ycor:
-                    if self.y_vel < 0:  # if the player is moving upwards
-                        self.ycor = ceil.ycor
-                        self.y_vel = 0
+                    # if more than 1/10 of the player's height is above the ceiling,
+                    # and they are near the edge of the surface, let them go up
+                    if abs(self.ycor - ceil.ycor) < self.height / 10 and \
+                            (ceil.xcor - self.xcor > 1 or self.xcor + self.width - ceil.xcor + ceil.width > 1):
+                        if self.y_vel < 0:  # if the player is moving upwards
+                            self.ycor = ceil.ycor
+                            self.y_vel = 0
 
             # horizontal collisions checks (left and right walls)
             if lt_wall and self.ycor + self.height > lt_wall.ycor \
@@ -146,7 +153,7 @@ class Player:
         self.ycor += self.y_vel * dt
         self.on_ground = False
 
-        self.check_collision(platforms)
+        self.check_surface_collision(platforms)
 
     def draw(
         self,
