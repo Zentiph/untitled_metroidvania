@@ -37,9 +37,9 @@ plr: Entities.Player = Entities.Player(
     (255, 0, 0)
 )
 collision_platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 800, 50, True, True, True, True),
-    Level.Surface(400, 400, 200, 200, True, True, True, True),
-    Level.Surface(0, 300, 200, 50, True, True, True, True)
+    Level.Surface(0, 500, 800, 50, True),
+    Level.Surface(400, 400, 200, 200, True),
+    Level.Surface(0, 300, 200, 50, True)
 ]
 
 # anything inside while True is the gameloop

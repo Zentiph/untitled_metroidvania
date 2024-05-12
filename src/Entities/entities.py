@@ -3,14 +3,14 @@
 Module containing entity related functionality.
 """
 
-from typing import Callable, List, Tuple
+from typing import List, Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION
 from ..Level import Surface
 
 
-class Entity:
+class Entity(pygame.Rect):
     """Base class for entity objects.
     """
 
@@ -64,10 +64,17 @@ class Entity:
                 f"Color tuple must be of length 3, not {len(color)}."
             )
 
+        super().__init__(xcor, ycor, width, height)
+
         self.xcor: int | float = xcor
         self.ycor: int | float = ycor
         self.width: int | float = width
         self.height: int | float = height
+
+        self.top: int | float = self.ycor
+        self.bottom: int | float = self.ycor + self.height
+        self.left: int | float = self.xcor
+        self.right: int | float = self.xcor + self.width
 
         self.speed: int | float = speed
         self.y_vel: int | float = 0
@@ -89,7 +96,7 @@ class Entity:
         """
 
         check_type(dt, int, float)
-        self.xcor -= self.speed * dt
+        self.left -= self.speed * dt
 
     def move_right(
         self,
@@ -102,7 +109,7 @@ class Entity:
         """
 
         check_type(dt, int, float)
-        self.xcor += self.speed * dt
+        self.left += self.speed * dt
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity.
@@ -112,7 +119,7 @@ class Entity:
             self.y_vel -= 500
             self.on_ground = False
 
-    def check_surface_collision(
+    def check_surface_collisions(
         self,
         platforms: List[Surface]
     ) -> None:
@@ -131,42 +138,29 @@ class Entity:
         for platform in platforms:
             check_type(platform, Surface)
 
-            floor = platform.floor
-            ceil = platform.ceiling
-            lt_wall = platform.left_wall
-            rt_wall = platform.right_wall
+            # vvv welcome to hell vvv
 
-            # vertical collisions checks (floor and ceiling)
-            if floor and self.xcor + self.width > floor.xcor \
-                    and self.xcor < floor.xcor + floor.width:
-                if self.ycor + self.height > floor.ycor and self.ycor < floor.ycor:
-                    # if more than 1/10 of the entity's height is below the floor, let them drop
-                    if self.ycor + self.height - floor.ycor < self.height / 10:
-                        if self.y_vel > 0:  # if the entity is moving downwards
-                            self.ycor = floor.ycor - self.height
-                            self.y_vel = 0
-                            self.on_ground = True
+            if platform.has_collision and self.colliderect(platform):
+                collision_area = self.clip(platform)
 
-            if ceil and self.xcor + self.width > ceil.xcor and self.xcor < ceil.xcor + ceil.width:
-                if self.ycor + self.height > ceil.ycor and self.ycor < ceil.ycor:
-                    # if more than 1/10 of the entity's height is above the ceiling,
-                    # and they are near the edge of the surface, let them go up
-                    if abs(self.ycor - ceil.ycor) < self.height / 10 and \
-                            (ceil.xcor - self.xcor > 1 or self.xcor + self.width - ceil.xcor + ceil.width > 1):
-                        if self.y_vel < 0:  # if the entity is moving upwards
-                            self.ycor = ceil.ycor
-                            self.y_vel = 0
+                # vertical collisions checks (floor and ceiling)
+                if collision_area.width - 3 > collision_area.height:
+                    # top of platform collision
+                    if self.bottom > platform.top and self.top < platform.top:
+                        self.bottom = platform.top
+                        self.y_vel = 0
+                        self.on_ground = True
+                    # bottom of platform collision
+                    elif self.top < platform.bottom and self.bottom > platform.bottom:
+                        self.top = platform.bottom
+                        self.y_vel = 0
 
-            # horizontal collisions checks (left and right walls)
-            if lt_wall and self.ycor + self.height > lt_wall.ycor \
-                    and self.ycor < lt_wall.ycor + lt_wall.height:
-                if self.xcor + self.width > lt_wall.xcor and self.xcor < lt_wall.xcor:
-                    self.xcor = lt_wall.xcor - self.width
-
-            if rt_wall and self.ycor + self.height > rt_wall.ycor \
-                    and self.ycor < rt_wall.ycor + rt_wall.height:
-                if self.xcor + self.width > rt_wall.xcor and self.xcor < rt_wall.xcor:
-                    self.xcor = rt_wall.xcor
+                # horizontal collisions checks (left and right walls)
+                if collision_area.height > collision_area.width - 3:
+                    if self.right > platform.left and self.left < platform.left:
+                        self.right = platform.left
+                    elif self.left < platform.right and self.right > platform.right:
+                        self.left = platform.right
 
     def update(
         self,
@@ -182,10 +176,15 @@ class Entity:
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
-        self.ycor += self.y_vel * dt
+        self.top += self.y_vel * dt
         self.on_ground = False
 
-        self.check_surface_collision(platforms)
+        self.top: int | float = self.ycor
+        self.bottom: int | float = self.ycor + self.height
+        self.left: int | float = self.xcor
+        self.right: int | float = self.xcor + self.width
+
+        self.check_surface_collisions(platforms)
 
     def draw(
         self,
@@ -202,7 +201,7 @@ class Entity:
         pygame.draw.rect(
             screen,
             self.color,
-            (self.xcor, self.ycor, self.width, self.height)
+            (self.left, self.top, self.width, self.height)
         )
 
 
@@ -287,7 +286,7 @@ class Player(Entity):
             # TODO
             ...
         self.y_vel += GRAVITY_ACCELERATION * dt
-        self.ycor += self.y_vel * dt
+        self.top += self.y_vel * dt
         self.on_ground = False
 
-        self.check_surface_collision(platforms)
+        self.check_surface_collisions(platforms)
