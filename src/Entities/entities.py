@@ -85,6 +85,46 @@ class Entity(pygame.Rect):
 
         self.color: Tuple[int] = color
 
+    # geometry attributes
+
+    def left(self) -> int | float:
+        """Returns the leftmost x-coordinate of the entity.
+        """
+
+        return self.xcor
+
+    def right(self) -> int | float:
+        """Returns the rightmost x-coordinate of the entity.
+        """
+
+        return self.xcor + self.width
+
+    def top(self) -> int | float:
+        """Returns the topmost y-coordinate of the entity.
+        """
+
+        return self.ycor
+
+    def bottom(self) -> int | float:
+        """Returns the bottommost y-coordinate of the entity.
+        """
+
+        return self.ycor + self.height
+
+    def center_x(self) -> int | float:
+        """Returns the center x-coordinate of the entity.
+        """
+
+        return self.xcor + self.width / 2
+
+    def center_y(self) -> int | float:
+        """Returns the center y-coordinate of the entity.
+        """
+
+        return self.ycor + self.height / 2
+
+    # movement
+
     def move_left(
         self,
         dt: int | float
@@ -118,6 +158,8 @@ class Entity(pygame.Rect):
         if self.on_ground:
             self.y_vel -= 500
             self.on_ground = False
+
+    # updates
 
     def check_surface_collisions(
         self,
