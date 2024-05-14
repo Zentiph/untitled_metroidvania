@@ -71,9 +71,9 @@ while True:
     if keys[pygame.K_y]:
         plr.health += 1
     if keys[pygame.K_u]:
-        plr.maxhealth -= 1
+        plr.max_health -= 1
     if keys[pygame.K_i]:
-        plr.maxhealth += 1
+        plr.max_health += 1
 
     # run any update logic for the player
     plr.interp(dt)
@@ -83,8 +83,9 @@ while True:
     screen.fill((0, 0, 0))
 
     plr.draw(screen)
-
     for platform in collision_platforms:
         platform.draw(screen)
+
+    GUI.HealthBar(screen, 0, Internal.SCREEN_HEIGHT-30, plr)
 
     pygame.display.flip()
