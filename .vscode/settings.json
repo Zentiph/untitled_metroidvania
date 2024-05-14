@@ -1,15 +1,20 @@
 {
     "cSpell.words": [
         "blit",
+        "colliderect",
+        "cooldown",
         "gameloop",
         "healthbar",
         "hitbox",
+        "hitboxes",
+        "interp",
         "Keybinds",
-        "maxhealth",
+        "lerp",
         "Metroidvania",
         "pygame",
         "Scancode",
-        "screeninfo"
+        "screeninfo",
+        "topleft"
     ],
     "pylint.args": [
         "--rcfile=.pylintrc"
