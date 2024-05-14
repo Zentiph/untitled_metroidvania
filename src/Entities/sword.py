@@ -2,6 +2,7 @@ import pygame
 from pygame.sprite import _Group
 from ..Entities import Player
 from ..Internal import load_png
+from 
 
 
 class sword(pygame.sprite.Sprite):
@@ -15,5 +16,6 @@ class sword(pygame.sprite.Sprite):
         self.speed= 10
 
     def sword_swing_up(self):
-        player.xcor
-        pygame.rect()
+       playe
+       pygame.draw.rect()
+        
