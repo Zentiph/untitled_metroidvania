@@ -6,11 +6,11 @@ Module containing entity related functionality.
 from typing import List, Tuple
 
 import pygame
-from ..Internal import check_type, GRAVITY_ACCELERATION
+from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
 from ..Level import Surface
 
 
-class Entity(pygame.Rect):
+class Entity(Hitbox):
     """Base class for entity objects.
     """
 
@@ -64,17 +64,7 @@ class Entity(pygame.Rect):
                 f"Color tuple must be of length 3, not {len(color)}."
             )
 
-        super().__init__(xcor, ycor, width, height)
-
-        self.xcor: int | float = xcor
-        self.ycor: int | float = ycor
-        self.width: int | float = width
-        self.height: int | float = height
-
-        self.top: int | float = self.ycor
-        self.bottom: int | float = self.ycor + self.height
-        self.left: int | float = self.xcor
-        self.right: int | float = self.xcor + self.width
+        super().__init__(xcor, ycor, width, height, color)
 
         self.speed: int | float = speed
         self.y_vel: int | float = 0
@@ -82,46 +72,6 @@ class Entity(pygame.Rect):
 
         self.health: int | float = health
         self.max_health: int | float = max_health
-
-        self.color: Tuple[int] = color
-
-    # geometry attributes
-
-    def left(self) -> int | float:
-        """Returns the leftmost x-coordinate of the entity.
-        """
-
-        return self.xcor
-
-    def right(self) -> int | float:
-        """Returns the rightmost x-coordinate of the entity.
-        """
-
-        return self.xcor + self.width
-
-    def top(self) -> int | float:
-        """Returns the topmost y-coordinate of the entity.
-        """
-
-        return self.ycor
-
-    def bottom(self) -> int | float:
-        """Returns the bottommost y-coordinate of the entity.
-        """
-
-        return self.ycor + self.height
-
-    def center_x(self) -> int | float:
-        """Returns the center x-coordinate of the entity.
-        """
-
-        return self.xcor + self.width / 2
-
-    def center_y(self) -> int | float:
-        """Returns the center y-coordinate of the entity.
-        """
-
-        return self.ycor + self.height / 2
 
     # movement
 
@@ -136,7 +86,7 @@ class Entity(pygame.Rect):
         """
 
         check_type(dt, int, float)
-        self.left -= self.speed * dt
+        self.xcor -= self.speed * dt
 
     def move_right(
         self,
@@ -149,7 +99,7 @@ class Entity(pygame.Rect):
         """
 
         check_type(dt, int, float)
-        self.left += self.speed * dt
+        self.xcor += self.speed * dt
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity.
@@ -169,10 +119,6 @@ class Entity(pygame.Rect):
 
         :param surfaces: A list of surfaces necessary for collision checks.
         :type surfaces: List[Surface]
-        :param x_vel: The x velocity of the entity.
-        :type x_vel: int | float
-        :param y_vel: The y velocity of the entity.
-        :type y_vel: int | float
         """
 
         check_type(platforms, list)
@@ -188,21 +134,21 @@ class Entity(pygame.Rect):
                 # vertical collisions checks (floor and ceiling)
                 if collision_area.width - 3 > collision_area.height:
                     # top of platform collision
-                    if self.bottom > platform.top and self.top < platform.top:
-                        self.bottom = platform.top
+                    if self.coords.bottom() > platform.coords.top() and self.coords.top() < platform.coords.top():
+                        self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
                     # bottom of platform collision
-                    elif self.top < platform.bottom and self.bottom > platform.bottom:
-                        self.top = platform.bottom
+                    elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
+                        self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
-                    if self.right > platform.left and self.left < platform.left:
-                        self.right = platform.left
-                    elif self.left < platform.right and self.right > platform.right:
-                        self.left = platform.right
+                    if self.coords.right() > platform.coords.left() and self.coords.left() < platform.coords.left():
+                        self.xcor = platform.coords.left() - self.width
+                    elif self.coords.left() < platform.coords.right() and self.coords.right() > platform.coords.right():
+                        self.xcor = platform.coords.right()
 
     def update(
         self,
@@ -218,13 +164,11 @@ class Entity(pygame.Rect):
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
-        self.top += self.y_vel * dt
+        self.ycor += self.y_vel * dt
         self.on_ground = False
 
-        self.top: int | float = self.ycor
-        self.bottom: int | float = self.ycor + self.height
-        self.left: int | float = self.xcor
-        self.right: int | float = self.xcor + self.width
+        self.topleft = (self.xcor, self.ycor)
+        self.coords.update(self.xcor, self.ycor)
 
         self.check_surface_collisions(platforms)
 
@@ -243,7 +187,7 @@ class Entity(pygame.Rect):
         pygame.draw.rect(
             screen,
             self.color,
-            (self.left, self.top, self.width, self.height)
+            (self.xcor, self.ycor, self.width, self.height)
         )
 
 
@@ -327,8 +271,12 @@ class Player(Entity):
         if self.health == 0:
             # TODO
             ...
+
         self.y_vel += GRAVITY_ACCELERATION * dt
-        self.top += self.y_vel * dt
+        self.ycor += self.y_vel * dt
         self.on_ground = False
+
+        self.topleft = (self.xcor, self.ycor)
+        self.coords.update(self.xcor, self.ycor)
 
         self.check_surface_collisions(platforms)

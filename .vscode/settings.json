@@ -5,11 +5,15 @@
         "cooldown",
         "gameloop",
         "hitbox",
+        "hitboxes",
+        "interp",
         "Keybinds",
+        "lerp",
         "Metroidvania",
         "pygame",
         "Scancode",
-        "screeninfo"
+        "screeninfo",
+        "topleft"
     ],
     "pylint.args": [
         "--rcfile=.pylintrc"

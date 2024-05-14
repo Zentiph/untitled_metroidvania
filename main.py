@@ -10,19 +10,20 @@ import pygame
 
 from screeninfo import get_monitors
 from src import Entities, Internal, Level
+from src.Internal import interp
 
 
 # get the main monitor info,
 # then set the pygame window to open in the center of the screen
 MONITOR = get_monitors()[0]
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-WINDOW_X: int = MONITOR.width / 2 - SCREEN_WIDTH / 2
-WINDOW_Y: int = MONITOR.height / 2 - SCREEN_HEIGHT / 2
+WINDOW_X: int = MONITOR.width / 2 - Internal.SCREEN_WIDTH / 2
+WINDOW_Y: int = MONITOR.height / 2 - Internal.SCREEN_HEIGHT / 2
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WINDOW_X, WINDOW_Y)
 pygame.init()
 
-screen: pygame.Surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen: pygame.Surface = pygame.display.set_mode(
+    (Internal.SCREEN_WIDTH, Internal.SCREEN_HEIGHT)
+)
 pygame.display.set_caption("Untitled Metroidvania.")
 
 # set the player and collision platforms
@@ -58,17 +59,23 @@ while True:
         plr.move_left(dt)
     if keys[pygame.K_d]:
         plr.move_right(dt)
-    if keys[pygame.K_SPACE] or keys[pygame.K_w]:
+    if keys[pygame.K_SPACE]:
         plr.jump()
+    if keys[pygame.K_k]:
+        plr.moveto(500, 200, 1, interp.ease_in_out_quart)
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
     # run any update logic for the player
+    plr.interp(dt)
     plr.update(dt, collision_platforms)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
+
     plr.draw(screen)
+
     for platform in collision_platforms:
         platform.draw(screen)
+
     pygame.display.flip()

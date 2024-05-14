@@ -7,10 +7,10 @@ from typing import Tuple
 
 import pygame
 
-from ..Internal import check_type
+from ..Internal import check_type, Hitbox
 
 
-class Surface(pygame.Rect):
+class Surface(Hitbox):
     """Class used to create surface objects.
     """
 
@@ -44,20 +44,8 @@ class Surface(pygame.Rect):
         check_type(height, int, float)
         check_type(has_collision, bool)
 
-        super().__init__(xcor, ycor, width, height)
-
-        self.xcor: int | float = xcor
-        self.ycor: int | float = ycor
-        self.width: int | float = width
-        self.height: int | float = height
-
-        self.top: int | float = self.ycor
-        self.bottom: int | float = self.ycor + self.height
-        self.left: int | float = self.xcor
-        self.right: int | float = self.xcor + self.width
-
+        super().__init__(xcor, ycor, width, height, color)
         self.has_collision: bool = has_collision
-        self.color: Tuple[int, int, int] = color
 
     def draw(
         self,
