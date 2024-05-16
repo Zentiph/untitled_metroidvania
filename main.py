@@ -42,7 +42,10 @@ healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 collision_platforms: List[Level.Surface] = [
     Level.Surface(0, 500, 800, 50, True),
     Level.Surface(400, 400, 200, 200, True),
-    Level.Surface(0, 300, 200, 50, True)
+    Level.Surface(0, 300, 200, 50, True),
+    Level.Surface(700, 300, 50, 25, True),
+    Level.Surface(750, 200, 50, 125, True),
+    Level.Surface(700, 200, 50, 20, True)
 ]
 
 # anything inside while True is the gameloop
