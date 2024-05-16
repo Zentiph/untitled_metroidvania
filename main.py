@@ -83,3 +83,5 @@ while True:
     healthbar.update(screen)
 
     pygame.display.flip()
+
+print("I LOVE PLTW")
