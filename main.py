@@ -67,7 +67,7 @@ while True:
         plr.moveto(500, 200, 1, interp.ease_in_out_quart)
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
-    print("BALLSACK")
+
     # run any update logic for the player
     plr.interp(dt)
     plr.update(dt, collision_platforms, screen)
@@ -83,5 +83,3 @@ while True:
     healthbar.update(screen)
 
     pygame.display.flip()
-
-print("I LOVE PLTW")
