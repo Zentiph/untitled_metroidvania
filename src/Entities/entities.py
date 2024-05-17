@@ -69,7 +69,8 @@ class Entity(Hitbox):
         self.speed: int | float = speed
         self.y_vel: int | float = 0
         self.on_ground: bool = False
-
+        self.can_jump: bool = True
+        self.can_double_jump: bool = True
         self.health: int | float = health
         self.max_health: int | float = max_health
 
@@ -105,9 +106,33 @@ class Entity(Hitbox):
         """Increases the entity's vertical velocity.
         """
 
-        if self.on_ground:
+        if self.can_double_jump:
             self.y_vel -= 500
             self.on_ground = False
+            self.can_jump = False
+            print("jump")
+        elif self.can_double_jump: 
+            self.can_double_jump = False
+            self.y_vel -= 500
+            print("double")
+            
+    
+    def double_jump(self) -> None:
+        """Increases the entity's vertical velocity again
+        if they are in the air
+        """
+        if (not self.on_ground) and self.can_jump:
+            self.y_vel -= 500
+            self.can_jump = False
+            print("double_jumped")
+            
+
+    """def can_double_jump(self) -> bool:"""
+
+    
+
+
+
 
     # updates
 
@@ -138,6 +163,7 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
+                        self.can_jump = True
                     # bottom of platform collision
                     elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()

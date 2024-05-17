@@ -63,6 +63,7 @@ while True:
         plr.move_right(dt)
     if keys[pygame.K_SPACE]:
         plr.jump()
+        
     if keys[pygame.K_k]:
         plr.moveto(500, 200, 1, interp.ease_in_out_quart)
     if keys[pygame.K_ESCAPE]:
