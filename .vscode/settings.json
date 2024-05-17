@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "blit",
+        "bottomleft",
+        "centerx",
         "colliderect",
         "cooldown",
         "gameloop",
