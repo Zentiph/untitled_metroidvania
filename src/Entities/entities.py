@@ -239,7 +239,8 @@ class Player(Entity):
             max_health,
             color
         )
-        self.weapon = None
+
+        self.weapon: None = None
 
     def take_damage(
         self,
@@ -258,14 +259,17 @@ class Player(Entity):
     def update(
         self,
         dt: int | float,
-        platforms: List[Surface]
+        platforms: List[Surface],
+        screen: pygame.Surface
     ) -> None:
-        """Runs update checks on the entity.
+        """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: int | float
         :param platforms: A list of platforms necessary for collision checks.
         :type platforms: List[Surface]
+        :param screen: The screen to draw on.
+        :type screen: pygame.Surface
         """
 
         if self.health == 0:

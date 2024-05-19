@@ -6,6 +6,7 @@
         "colliderect",
         "cooldown",
         "gameloop",
+        "healthbar",
         "hitbox",
         "hitboxes",
         "interp",

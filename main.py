@@ -9,7 +9,7 @@ from typing import List
 import pygame
 
 from screeninfo import get_monitors
-from src import Entities, Internal, Level
+from src import Entities, GUI, Internal, Level
 from src.Internal import interp
 
 
@@ -18,7 +18,7 @@ from src.Internal import interp
 MONITOR = get_monitors()[0]
 WINDOW_X: int = MONITOR.width / 2 - Internal.SCREEN_WIDTH / 2
 WINDOW_Y: int = MONITOR.height / 2 - Internal.SCREEN_HEIGHT / 2
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WINDOW_X, WINDOW_Y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{WINDOW_X}, {WINDOW_Y}"
 pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode(
@@ -37,6 +37,8 @@ plr: Entities.Player = Entities.Player(
     10,
     (255, 0, 0)
 )
+healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
+
 collision_platforms: List[Level.Surface] = [
     Level.Surface(0, 500, 800, 50, True),
     Level.Surface(400, 400, 200, 200, True),
@@ -68,7 +70,7 @@ while True:
 
     # run any update logic for the player
     plr.interp(dt)
-    plr.update(dt, collision_platforms)
+    plr.update(dt, collision_platforms, screen)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
@@ -77,5 +79,7 @@ while True:
 
     for platform in collision_platforms:
         platform.draw(screen)
+
+    healthbar.update(screen)
 
     pygame.display.flip()
