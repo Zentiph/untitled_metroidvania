@@ -3,10 +3,10 @@
 Module containing useful constants to be used throughout the project.
 """
 
-SCREEN_WIDTH = 800
+SCREEN_WIDTH = 1600
 '''The width of the screen.
 '''
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 900
 '''The height of the screen.
 '''
 

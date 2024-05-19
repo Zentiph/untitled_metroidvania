@@ -18,7 +18,7 @@ from src.Internal import interp
 MONITOR = get_monitors()[0]
 WINDOW_X: int = MONITOR.width / 2 - Internal.SCREEN_WIDTH / 2
 WINDOW_Y: int = MONITOR.height / 2 - Internal.SCREEN_HEIGHT / 2
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WINDOW_X, WINDOW_Y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{WINDOW_X}, {WINDOW_Y}"
 pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode(
