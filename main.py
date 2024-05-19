@@ -35,6 +35,7 @@ plr: Entities.Player = Entities.Player(
     250,
     10,
     10,
+    True,
     (255, 0, 0)
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
@@ -64,13 +65,13 @@ while True:
     if keys[pygame.K_SPACE]:
         plr.jump()
     if keys[pygame.K_k]:
-        plr.moveto(500, 200, 1, interp.ease_in_out_quart)
+        plr.moveto(500, 200, 1, interp.ease_out_quart)
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
     # run any update logic for the player
     plr.interp(dt)
-    plr.update(dt, collision_platforms, screen)
+    plr.update(dt, collision_platforms)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))

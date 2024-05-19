@@ -23,7 +23,8 @@ class Entity(Hitbox):
         speed: int | float,
         health: int,
         max_health: int,
-        color: Tuple[int]
+        has_collision: bool = True,
+        color: Tuple[int] = (255, 255, 255)
 
     ) -> None:
         """Initializer for the entity object.
@@ -42,32 +43,20 @@ class Entity(Hitbox):
         :type health: int
         :param max_health: The maximum health of the entity object.
         :type max_health: int
+        :param has_collision: Whether the entity object has collision.
+        :type has_collision: bool, optional
         :param color: The color of the entity object.
         :type color: Tuple[int]
         """
 
         # type checking
-        check_type(xcor, int, float)
-        check_type(ycor, int, float)
-        check_type(width, int, float)
-        check_type(height, int, float)
         check_type(speed, int, float)
         check_type(health, int)
         check_type(max_health, int)
-        check_type(color, tuple)
-        for v in color:
-            check_type(v, int)
-            if v < 0 or v > 255:
-                raise ValueError(f"Color value {v} is out of range.")
-        if len(color) != 3:
-            raise ValueError(
-                f"Color tuple must be of length 3, not {len(color)}."
-            )
 
-        super().__init__(xcor, ycor, width, height, color)
+        super().__init__(xcor, ycor, width, height, has_collision, color)
 
         self.speed: int | float = speed
-        self.y_vel: int | float = 0
         self.on_ground: bool = False
 
         self.health: int | float = health
@@ -128,26 +117,30 @@ class Entity(Hitbox):
 
             # vvv welcome to hell vvv
 
-            if platform.has_collision and self.colliderect(platform):
+            if self.has_collision and platform.has_collision and self.colliderect(platform):
                 collision_area = self.clip(platform)
 
                 # vertical collisions checks (floor and ceiling)
                 if collision_area.width - 3 > collision_area.height:
                     # top of platform collision
-                    if self.coords.bottom() > platform.coords.top() and self.coords.top() < platform.coords.top():
+                    if self.coords.bottom() > platform.coords.top() \
+                            and self.coords.top() < platform.coords.top():
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
                     # bottom of platform collision
-                    elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
+                    elif self.coords.top() < platform.coords.bottom() \
+                            and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
-                    if self.coords.right() > platform.coords.left() and self.coords.left() < platform.coords.left():
+                    if self.coords.right() > platform.coords.left() \
+                            and self.coords.left() < platform.coords.left():
                         self.xcor = platform.coords.left() - self.width
-                    elif self.coords.left() < platform.coords.right() and self.coords.right() > platform.coords.right():
+                    elif self.coords.left() < platform.coords.right() \
+                            and self.coords.right() > platform.coords.right():
                         self.xcor = platform.coords.right()
 
     def update(
@@ -167,7 +160,9 @@ class Entity(Hitbox):
         self.ycor += self.y_vel * dt
         self.on_ground = False
 
+        # pylint: disable=attribute-defined-outside-init
         self.topleft = (self.xcor, self.ycor)
+        # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
         self.check_surface_collisions(platforms)
@@ -195,53 +190,6 @@ class Player(Entity):
     """Player class.
     """
 
-    def __init__(
-        self,
-        xcor: int | float,
-        ycor: int | float,
-        width: int | float,
-        height: int | float,
-        speed: int | float,
-        health: int,
-        max_health: int,
-        color: Tuple[int],
-        weapon: None = None,
-    ) -> None:
-        """Initializer for the entity object.
-
-        :param xcor: The x position of the entity object.
-        :type xcor: int | float
-        :param ycor: The y position of the entity object.
-        :type ycor: int | float
-        :param width: The width of the entity object.
-        :type width: int | float
-        :param height: The height of the entity object.
-        :type height: int | float
-        :param speed: The speed of the entity object.
-        :type speed: int | float
-        :param health: The health of the entity object.
-        :type health: int
-        :param max_health: The maximum health of the entity object.
-        :type max_health: int
-        :param color: The color of the entity object.
-        :type color: Tuple[int]
-        :param weapon: The weapon of the player.
-        :type weapon: Weapon | None
-        """
-
-        super().__init__(
-            xcor,
-            ycor,
-            width,
-            height,
-            speed,
-            health,
-            max_health,
-            color
-        )
-
-        self.weapon: None = None
-
     def take_damage(
         self,
         dmg: int
@@ -260,7 +208,6 @@ class Player(Entity):
         self,
         dt: int | float,
         platforms: List[Surface],
-        screen: pygame.Surface
     ) -> None:
         """Runs update checks on the player.
 
@@ -280,7 +227,9 @@ class Player(Entity):
         self.ycor += self.y_vel * dt
         self.on_ground = False
 
+        # pylint: disable=attribute-defined-outside-init
         self.topleft = (self.xcor, self.ycor)
+        # pylint: disable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
         self.check_surface_collisions(platforms)

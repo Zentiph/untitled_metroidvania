@@ -7,7 +7,7 @@ from typing import Tuple
 
 import pygame
 
-from ..Internal import check_range, check_type, Hitbox
+from ..Internal import check_type, Hitbox
 
 
 class Surface(Hitbox):
@@ -39,18 +39,7 @@ class Surface(Hitbox):
         :type color: Tuple[int], optional
         """
 
-        # type checks
-        check_type(xcor, int, float)
-        check_type(ycor, int, float)
-        check_type(width, int, float)
-        check_type(height, int, float)
-        check_type(has_collision, bool)
-        check_type(color, tuple)
-        for v in color:
-            check_range(v, 0, 255)
-
-        super().__init__(xcor, ycor, width, height, color)
-        self.has_collision: bool = has_collision
+        super().__init__(xcor, ycor, width, height, has_collision, color)
 
     def draw(
         self,
@@ -96,15 +85,6 @@ class Spike(Hitbox):
         :type color: Tuple[int], optional
         """
 
-        # type checks
-        check_type(xcor, int, float)
-        check_type(ycor, int, float)
-        check_type(width, int, float)
-        check_type(height, int, float)
-        check_type(color, tuple)
-        for v in color:
-            check_range(v, 0, 255)
-
         super().__init__(xcor, ycor, width, height, color)
 
     def draw(
@@ -122,5 +102,7 @@ class Spike(Hitbox):
         pygame.draw.polygon(
             screen,
             self.color,
-            (self.bottomleft, (self.centerx, self.top), self.bottomright)
+            (self.coords.bottom_left(),
+             (self.coords.center_x, self.coords.top()),
+             self.coords.bottom_right())
         )
