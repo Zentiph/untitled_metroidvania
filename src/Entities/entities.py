@@ -96,7 +96,6 @@ class Entity(Hitbox):
         """
 
         if self.on_ground:
-            print("jump")
             self.y_vel -= 500
             self.on_ground = False
             self.double_jump_debounce = False
@@ -107,7 +106,6 @@ class Entity(Hitbox):
         """
 
         if not self.on_ground and not self.double_jump_debounce:
-            print("double jump")
             self.y_vel = -500
             self.double_jump_debounce = True
 

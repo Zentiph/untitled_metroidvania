@@ -64,7 +64,7 @@ while True:
         plr.move_left(dt)
     if keys[pygame.K_d]:
         plr.move_right(dt)
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] or keys[pygame.K_w]:
         if plr.on_ground:
             plr.jump()
             start_time = pygame.time.get_ticks()
