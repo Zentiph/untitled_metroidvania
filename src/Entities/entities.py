@@ -121,6 +121,12 @@ class Entity(Hitbox):
             print("double jump")
             self.y_vel = -500
             self.double_jump_debounce = True
+    
+    def dash(self) -> None:
+        """Increases the entity's horizontal velocity if
+        not on the ground and if it is available"""
+        if not self.on_ground:
+            self.move
 
     # updates
 
