@@ -58,6 +58,7 @@ class Entity(Hitbox):
 
         self.speed: int | float = speed
         self.on_ground: bool = False
+        self.double_jump_debounce: bool = True
 
         self.health: int | float = health
         self.max_health: int | float = max_health
@@ -91,12 +92,24 @@ class Entity(Hitbox):
         self.xcor += self.speed * dt
 
     def jump(self) -> None:
-        """Increases the entity's vertical velocity.
+        """Increases the entity's vertical velocity if on the ground.
         """
 
         if self.on_ground:
+            print("jump")
             self.y_vel -= 500
             self.on_ground = False
+            self.double_jump_debounce = False
+
+    def double_jump(self) -> None:
+        """Increments the entity's vertical velocity if not
+        on the ground and the double jump is available.
+        """
+
+        if not self.on_ground and not self.double_jump_debounce:
+            print("double jump")
+            self.y_vel = -500
+            self.double_jump_debounce = True
 
     # updates
 
