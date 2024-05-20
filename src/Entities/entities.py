@@ -107,8 +107,20 @@ class Entity(Hitbox):
         """
 
         if self.on_ground:
+            print("jump")
             self.y_vel -= 500
             self.on_ground = False
+            self.double_jump_debounce = False
+
+    def double_jump(self) -> None:
+        """Increments the entity's vertical velocity if not
+        on the ground and the double jump is available.
+        """
+
+        if not self.on_ground and not self.double_jump_debounce:
+            print("double jump")
+            self.y_vel = -500
+            self.double_jump_debounce = True
 
     # updates
 
@@ -139,7 +151,6 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
-                        self.can_jump = True
                     # bottom of platform collision
                     elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()
