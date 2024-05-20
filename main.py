@@ -18,7 +18,7 @@ from src.Internal import interp
 MONITOR = get_monitors()[0]
 WINDOW_X: int = MONITOR.width / 2 - Internal.SCREEN_WIDTH / 2
 WINDOW_Y: int = MONITOR.height / 2 - Internal.SCREEN_HEIGHT / 2
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (WINDOW_X, WINDOW_Y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{WINDOW_X}, {WINDOW_Y}"
 pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode(
@@ -45,6 +45,8 @@ collision_platforms: List[Level.Surface] = [
     Level.Surface(0, 300, 200, 50, True)
 ]
 
+jump_flag: bool = False
+
 # anything inside while True is the gameloop
 # this code executes each frame
 while True:
@@ -62,8 +64,12 @@ while True:
     if keys[pygame.K_d]:
         plr.move_right(dt)
     if keys[pygame.K_SPACE]:
-        plr.jump()
-        
+        if plr.on_ground:
+            plr.jump()
+            start_time = pygame.time.get_ticks()
+            jump_flag = True
+        elif not jump_flag and not plr.double_jump_debounce:
+            plr.double_jump()
     if keys[pygame.K_k]:
         plr.moveto(500, 200, 1, interp.ease_in_out_quart)
     if keys[pygame.K_ESCAPE]:
@@ -82,5 +88,8 @@ while True:
         platform.draw(screen)
 
     healthbar.update(screen)
+
+    if jump_flag and pygame.time.get_ticks() - start_time >= 400:
+        jump_flag = False
 
     pygame.display.flip()
