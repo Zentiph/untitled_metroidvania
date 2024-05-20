@@ -257,7 +257,8 @@ class Hitbox(pygame.Rect):
         xcor: int | float,
         ycor: int | float,
         duration: int | float,
-        easing_type: EasingFunction
+        easing_type: EasingFunction,
+        disable_collision: bool = True
     ) -> None:
         """Moves the hitbox to the specified coordinates.
 
@@ -267,13 +268,17 @@ class Hitbox(pygame.Rect):
         :type ycor: int | float
         :param easing_type: The easing function to use.
         :type easing_type: EasingFunction
+        :param disable_collision: Whether to disable collision of the moving object.
+        :type disable_collision: bool, optional
         """
 
         check_type(xcor, int, float)
         check_type(ycor, int, float)
         check_type(duration, int, float)
+        check_type(disable_collision, bool)
 
-        self.has_collision = False
+        if disable_collision:
+            self.has_collision = False
 
         self.interp_data.initial_pos = (self.xcor, self.ycor)
         self.interp_data.target_pos = (xcor, ycor)

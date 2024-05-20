@@ -46,7 +46,8 @@ collision_platforms: List[Level.Surface] = [
     Level.Surface(0, 300, 200, 50, True)
 ]
 
-jump_flag: bool = False
+jump_debounce: bool = False
+interp_debounce: bool = False
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -67,12 +68,21 @@ while True:
     if keys[pygame.K_SPACE] or keys[pygame.K_w]:
         if plr.on_ground:
             plr.jump()
-            start_time = pygame.time.get_ticks()
-            jump_flag = True
-        elif not jump_flag and not plr.double_jump_debounce:
+            start_time_j = pygame.time.get_ticks()
+            jump_debounce = True
+        elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_k]:
-        plr.moveto(500, 200, 1, interp.ease_out_quart)
+    if keys[pygame.K_k] and not interp_debounce:
+        plr.moveto(
+            plr.xcor + 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+
+        start_time_i = pygame.time.get_ticks()
+        interp_debounce = True
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
@@ -90,7 +100,10 @@ while True:
 
     healthbar.update(screen)
 
-    if jump_flag and pygame.time.get_ticks() - start_time >= 400:
-        jump_flag = False
+    if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
+        jump_debounce = False
+
+    if interp_debounce and pygame.time.get_ticks() - start_time_i >= 400 and plr.on_ground:
+        interp_debounce = False
 
     pygame.display.flip()
