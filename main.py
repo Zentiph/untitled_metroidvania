@@ -49,8 +49,6 @@ screen_objects: Level.Group = Level.Group(
     platforms
 )
 
-print(platforms.objects.keys())
-
 jump_debounce: bool = False
 interp_debounce: bool = False
 
