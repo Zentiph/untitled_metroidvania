@@ -39,10 +39,11 @@ plr: Entities.Player = Entities.Player(
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
-collision_platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 800, 50, True),
-    Level.Surface(400, 400, 200, 200, True),
-    Level.Surface(0, 300, 200, 50, True)
+level_2_platforms: List[Level.Surface] = [
+    Level.Surface(0,850,1600,50, True),
+    Level.Surface(0,0,50,1600, True),
+    Level.Surface(1550,0,50,1600, True),
+    Level.Surface(0,0,1600,50, True),
 ]
 
 jump_flag: bool = False
@@ -77,6 +78,11 @@ while True:
 
     # run any update logic for the player
     plr.interp(dt)
+
+
+    #TO-DO, add level switching
+    collision_platforms = level_2_platforms
+
     plr.update(dt, collision_platforms, screen)
 
     # redraw the updated items on the screen
