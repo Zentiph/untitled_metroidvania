@@ -5,21 +5,11 @@ and utilization of graphical aspects that are visible at
 all times outside of menus.
 """
 
-<<<<<<< HEAD
-from pygame import Rect, draw, display, font
-=======
 import pygame
->>>>>>> 7a0d21fa72ede961c5998d78d1dd688839626193
 from ..Entities import Player
 
 
 class HealthBar:
-<<<<<<< HEAD
-    def __init__(self, screen, xcor, ycor, PlayerCharacter):
-        draw.rect(screen, (255, 0, 0), Rect(xcor, ycor, 200, 30))
-        draw.rect(screen, (0, 255, 0), Rect(xcor, ycor, 200*(PlayerCharacter.health/PlayerCharacter.max_health), 30))
-        screen.blit(font.SysFont("Comic Sans MS", 30).render(f"{round(PlayerCharacter.health)} / {PlayerCharacter.max_health}", False, (0, 0, 0)), (xcor+50, ycor-6))
-=======
     """Class for displaying the player healthbar.
     """
 
@@ -75,4 +65,3 @@ class HealthBar:
                 (0, 0, 0)),
             (self.xcor + 50, self.ycor - 6)
         )
->>>>>>> 7a0d21fa72ede961c5998d78d1dd688839626193

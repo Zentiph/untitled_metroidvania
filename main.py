@@ -88,10 +88,6 @@ while True:
     for platform in collision_platforms:
         platform.draw(screen)
 
-<<<<<<< HEAD
-    GUI.HealthBar(screen, 0, Internal.SCREEN_HEIGHT-30, plr)
-=======
     healthbar.update(screen)
->>>>>>> 7a0d21fa72ede961c5998d78d1dd688839626193
 
     pygame.display.flip()
