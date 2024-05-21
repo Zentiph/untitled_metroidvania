@@ -29,7 +29,7 @@ pygame.display.set_caption("Untitled Metroidvania.")
 # set the player and collision platforms
 plr: Entities.Player = Entities.Player(
     50,
-    0,
+    800,
     50,
     80,
     250,
