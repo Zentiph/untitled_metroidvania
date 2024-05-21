@@ -67,9 +67,12 @@ class Entity(Hitbox):
         super().__init__(xcor, ycor, width, height, color)
 
         self.speed: int | float = speed
+        self.x_vel: int | float = 0
         self.y_vel: int | float = 0
         self.on_ground: bool = False
         self.double_jump_debounce: bool = True
+        self.can_dash: bool = False
+        self.num_dashes: int | float = 0
 
         self.health: int | float = health
         self.max_health: int | float = max_health
@@ -88,6 +91,7 @@ class Entity(Hitbox):
 
         check_type(dt, int, float)
         self.xcor -= self.speed * dt
+        self.x_vel = -self.speed
 
     def move_right(
         self,
@@ -101,6 +105,7 @@ class Entity(Hitbox):
 
         check_type(dt, int, float)
         self.xcor += self.speed * dt
+        self.x_vel = self.speed
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity if on the ground.
@@ -122,11 +127,22 @@ class Entity(Hitbox):
             self.y_vel = -500
             self.double_jump_debounce = True
     
-    def dash(self) -> None:
-        """Increases the entity's horizontal velocity if
-        not on the ground and if it is available"""
-        if not self.on_ground:
-            self.move
+    """def dash(self) -> None:
+       Increases the entity's horizontal velocity if
+        not on the ground and if it is available
+        if self.can_dash and self.num_dashes < 2:
+            if self.x_vel < 0:
+                    
+            elif self.x_vel > 0: """
+    
+    def test_dist(
+        self,
+    ) -> None:
+        self.xcor += 250
+        self.moveto("", self.ycor)
+        
+        
+            
 
     # updates
 
@@ -157,6 +173,7 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
+                        self.can_dash = True
                     # bottom of platform collision
                     elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()

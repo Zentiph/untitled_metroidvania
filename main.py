@@ -74,6 +74,8 @@ while True:
         plr.moveto(500, 200, 1, interp.ease_in_out_quart)
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
+    if keys[pygame.K_LSHIFT]:
+        plr.test_dist(dt)
 
     # run any update logic for the player
     plr.interp(dt)
