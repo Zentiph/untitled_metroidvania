@@ -1,6 +1,6 @@
 """Level
 
-The Level package contains functionality for level objects such as surfaces.
+The Level package contains functionality for level objects such as platforms.
 """
 
-from .surfaces import Surface
+from .objects import Group, Platform

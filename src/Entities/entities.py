@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
-from ..Level import Surface
+from ..Level import Group, Platform
 
 
 class Entity(Hitbox):
@@ -111,20 +111,20 @@ class Entity(Hitbox):
 
     # updates
 
-    def check_surface_collisions(
+    def check_platform_collisions(
         self,
-        platforms: List[Surface]
+        platforms: Group
     ) -> None:
         """Run checks on the entity's collisions with other objects.
 
-        :param surfaces: A list of surfaces necessary for collision checks.
-        :type surfaces: List[Surface]
+        :param platforms: A list of platforms necessary for collision checks.
+        :type platforms: List[Platform]
         """
 
-        check_type(platforms, list)
+        check_type(platforms, Group)
 
         for platform in platforms:
-            check_type(platform, Surface)
+            check_type(platform, Platform)
 
             # vvv welcome to hell vvv
 
@@ -157,14 +157,14 @@ class Entity(Hitbox):
     def update(
         self,
         dt: int | float,
-        platforms: List[Surface]
+        platforms: List[Platform]
     ) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
         :type dt: int | float
         :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Surface]
+        :type platforms: List[Platform]
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
@@ -176,7 +176,7 @@ class Entity(Hitbox):
         # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
-        self.check_surface_collisions(platforms)
+        self.check_platform_collisions(platforms)
 
     def draw(
         self,
@@ -218,14 +218,14 @@ class Player(Entity):
     def update(
         self,
         dt: int | float,
-        platforms: List[Surface],
+        platforms: List[Platform],
     ) -> None:
         """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: int | float
         :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Surface]
+        :type platforms: List[Platform]
         :param screen: The screen to draw on.
         :type screen: pygame.Surface
         """
@@ -243,4 +243,4 @@ class Player(Entity):
         # pylint: disable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
-        self.check_surface_collisions(platforms)
+        self.check_platform_collisions(platforms)

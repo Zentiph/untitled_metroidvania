@@ -4,7 +4,6 @@ The main module of the project. Runs the gameloop.
 """
 
 import os
-from typing import List
 
 import pygame
 
@@ -40,11 +39,17 @@ plr: Entities.Player = Entities.Player(
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
-collision_platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 800, 50, True),
-    Level.Surface(400, 400, 200, 200, True),
-    Level.Surface(0, 300, 200, 50, True)
-]
+platforms: Level.Group = Level.Group(
+    Level.Platform(0, 500, 800, 50, True),
+    Level.Platform(400, 400, 200, 200, True),
+    Level.Platform(0, 300, 200, 50, True)
+)
+
+screen_objects: Level.Group = Level.Group(
+    platforms
+)
+
+print(platforms.objects.keys())
 
 jump_debounce: bool = False
 interp_debounce: bool = False
@@ -61,11 +66,11 @@ while True:
 
     # what to do if certain keys are pressed
     keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
         plr.move_left(dt)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         plr.move_right(dt)
-    if keys[pygame.K_SPACE] or keys[pygame.K_w]:
+    if keys[pygame.K_w] or keys[pygame.K_UP]:
         if plr.on_ground:
             plr.jump()
             start_time_j = pygame.time.get_ticks()
@@ -88,17 +93,15 @@ while True:
 
     # run any update logic for the player
     plr.interp(dt)
-    plr.update(dt, collision_platforms)
+    plr.update(dt, platforms)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
 
     plr.draw(screen)
-
-    for platform in collision_platforms:
-        platform.draw(screen)
-
     healthbar.update(screen)
+
+    platforms.draw(screen)
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
