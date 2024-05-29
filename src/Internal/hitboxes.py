@@ -47,6 +47,8 @@ class Coordinates:
         self.width: int | float = width
         self.height: int | float = height
 
+        self.y_vel: int | float = 0
+
     def update(
         self,
         xcor: int | float,
@@ -196,6 +198,7 @@ class Hitbox(pygame.Rect):
         ycor: int | float,
         width: int | float,
         height: int | float,
+        has_collision: bool = True,
         color: Tuple[int] = (0, 255, 0)
 
     ) -> None:
@@ -209,6 +212,8 @@ class Hitbox(pygame.Rect):
         :type width: int | float
         :param height: The height of the hitbox object.
         :type height: int | float
+        :param has_collision: Whether the hitbox has collision.
+        :type has_collision: bool
         :param color: The color of the hitbox object.
         :type color: Tuple[int]
         """
@@ -218,6 +223,7 @@ class Hitbox(pygame.Rect):
         check_type(ycor, int, float)
         check_type(width, int, float)
         check_type(height, int, float)
+        check_type(has_collision, bool)
         check_type(color, tuple)
         for v in color:
             check_type(v, int)
@@ -232,8 +238,9 @@ class Hitbox(pygame.Rect):
 
         self.xcor: int | float = xcor
         self.ycor: int | float = ycor
+        self.y_vel: int | float = 0
 
-        self.y_vel: int = 0
+        self.has_collision = has_collision
         self.color: Tuple[int] = color
 
         self.coords = Coordinates(xcor, ycor, width, height)
@@ -250,7 +257,8 @@ class Hitbox(pygame.Rect):
         xcor: int | float,
         ycor: int | float,
         duration: int | float,
-        easing_type: EasingFunction
+        easing_type: EasingFunction,
+        disable_collision: bool = True
     ) -> None:
         """Moves the hitbox to the specified coordinates.
 
@@ -260,11 +268,17 @@ class Hitbox(pygame.Rect):
         :type ycor: int | float
         :param easing_type: The easing function to use.
         :type easing_type: EasingFunction
+        :param disable_collision: Whether to disable collision of the moving object.
+        :type disable_collision: bool, optional
         """
 
         check_type(xcor, int, float)
         check_type(ycor, int, float)
         check_type(duration, int, float)
+        check_type(disable_collision, bool)
+
+        if disable_collision:
+            self.has_collision = False
 
         self.interp_data.initial_pos = (self.xcor, self.ycor)
         self.interp_data.target_pos = (xcor, ycor)
@@ -293,6 +307,7 @@ class Hitbox(pygame.Rect):
                 self.xcor = self.interp_data.target_pos[0]
                 self.ycor = self.interp_data.target_pos[1]
                 self.interp_data.moving = False
+                self.has_collision = True
             else:
                 t = self.interp_data.elapsed_time / self.interp_data.duration
 

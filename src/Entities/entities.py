@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
-from ..Level import Surface
+from ..Level import Group, Platform
 
 
 class Entity(Hitbox):
@@ -23,7 +23,8 @@ class Entity(Hitbox):
         speed: int | float,
         health: int,
         max_health: int,
-        color: Tuple[int]
+        has_collision: bool = True,
+        color: Tuple[int] = (255, 255, 255)
 
     ) -> None:
         """Initializer for the entity object.
@@ -42,33 +43,20 @@ class Entity(Hitbox):
         :type health: int
         :param max_health: The maximum health of the entity object.
         :type max_health: int
+        :param has_collision: Whether the entity object has collision.
+        :type has_collision: bool, optional
         :param color: The color of the entity object.
         :type color: Tuple[int]
         """
 
         # type checking
-        check_type(xcor, int, float)
-        check_type(ycor, int, float)
-        check_type(width, int, float)
-        check_type(height, int, float)
         check_type(speed, int, float)
         check_type(health, int)
         check_type(max_health, int)
-        check_type(color, tuple)
-        for v in color:
-            check_type(v, int)
-            if v < 0 or v > 255:
-                raise ValueError(f"Color value {v} is out of range.")
-        if len(color) != 3:
-            raise ValueError(
-                f"Color tuple must be of length 3, not {len(color)}."
-            )
 
-        super().__init__(xcor, ycor, width, height, color)
+        super().__init__(xcor, ycor, width, height, has_collision, color)
 
         self.speed: int | float = speed
-        self.x_vel: int | float = 0
-        self.y_vel: int | float = 0
         self.on_ground: bool = False
         self.double_jump_debounce: bool = True
         self.can_dash: bool = False
@@ -112,7 +100,6 @@ class Entity(Hitbox):
         """
 
         if self.on_ground:
-            print("jump")
             self.y_vel -= 500
             self.on_ground = False
             self.double_jump_debounce = False
@@ -123,7 +110,6 @@ class Entity(Hitbox):
         """
 
         if not self.on_ground and not self.double_jump_debounce:
-            print("double jump")
             self.y_vel = -500
             self.double_jump_debounce = True
     
@@ -146,67 +132,82 @@ class Entity(Hitbox):
 
     # updates
 
-    def check_surface_collisions(
+    def check_platform_collisions(
         self,
-        platforms: List[Surface]
+        platforms: Group
     ) -> None:
         """Run checks on the entity's collisions with other objects.
 
-        :param surfaces: A list of surfaces necessary for collision checks.
-        :type surfaces: List[Surface]
+        :param platforms: A list of platforms necessary for collision checks.
+        :type platforms: List[Platform]
         """
 
-        check_type(platforms, list)
+        check_type(platforms, Group)
 
         for platform in platforms:
-            check_type(platform, Surface)
+            check_type(platform, Platform)
 
             # vvv welcome to hell vvv
 
-            if platform.has_collision and self.colliderect(platform):
+            if self.has_collision and platform.has_collision and self.colliderect(platform):
                 collision_area = self.clip(platform)
 
                 # vertical collisions checks (floor and ceiling)
                 if collision_area.width - 3 > collision_area.height:
                     # top of platform collision
-                    if self.coords.bottom() > platform.coords.top() and self.coords.top() < platform.coords.top():
+                    if self.coords.bottom() > platform.coords.top() \
+                            and self.coords.top() < platform.coords.top():
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
-                        self.can_dash = True
+
                     # bottom of platform collision
-                    elif self.coords.top() < platform.coords.bottom() and self.coords.bottom() > platform.coords.bottom():
+                    elif self.coords.top() < platform.coords.bottom() \
+                            and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
-                    if self.coords.right() > platform.coords.left() and self.coords.left() < platform.coords.left():
+                    if self.coords.right() > platform.coords.left() \
+                            and self.coords.right() < platform.coords.center_x():
+                        # reset interp data to stop movement if a collision is detected
+                        self.interp_data.moving = False
+                        self.interp_data.target_pos = (self.xcor, self.ycor)
+
                         self.xcor = platform.coords.left() - self.width
-                    elif self.coords.left() < platform.coords.right() and self.coords.right() > platform.coords.right():
+
+                    elif self.coords.left() < platform.coords.right() \
+                            and self.coords.left() > platform.coords.center_x():
+                        # reset interp data to stop movement if a collision is detected
+                        self.interp_data.moving = False
+                        self.interp_data.target_pos = (self.xcor, self.ycor)
+
                         self.xcor = platform.coords.right()
 
     def update(
         self,
         dt: int | float,
-        platforms: List[Surface]
+        platforms: List[Platform]
     ) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
         :type dt: int | float
         :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Surface]
+        :type platforms: List[Platform]
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
         self.ycor += self.y_vel * dt
         self.on_ground = False
 
+        # pylint: disable=attribute-defined-outside-init
         self.topleft = (self.xcor, self.ycor)
+        # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
-        self.check_surface_collisions(platforms)
+        self.check_platform_collisions(platforms)
 
     def draw(
         self,
@@ -231,53 +232,6 @@ class Player(Entity):
     """Player class.
     """
 
-    def __init__(
-        self,
-        xcor: int | float,
-        ycor: int | float,
-        width: int | float,
-        height: int | float,
-        speed: int | float,
-        health: int,
-        max_health: int,
-        color: Tuple[int],
-        weapon: None = None,
-    ) -> None:
-        """Initializer for the entity object.
-
-        :param xcor: The x position of the entity object.
-        :type xcor: int | float
-        :param ycor: The y position of the entity object.
-        :type ycor: int | float
-        :param width: The width of the entity object.
-        :type width: int | float
-        :param height: The height of the entity object.
-        :type height: int | float
-        :param speed: The speed of the entity object.
-        :type speed: int | float
-        :param health: The health of the entity object.
-        :type health: int
-        :param max_health: The maximum health of the entity object.
-        :type max_health: int
-        :param color: The color of the entity object.
-        :type color: Tuple[int]
-        :param weapon: The weapon of the player.
-        :type weapon: Weapon | None
-        """
-
-        super().__init__(
-            xcor,
-            ycor,
-            width,
-            height,
-            speed,
-            health,
-            max_health,
-            color
-        )
-
-        self.weapon: None = None
-
     def take_damage(
         self,
         dmg: int
@@ -295,15 +249,14 @@ class Player(Entity):
     def update(
         self,
         dt: int | float,
-        platforms: List[Surface],
-        screen: pygame.Surface
+        platforms: List[Platform],
     ) -> None:
         """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: int | float
         :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Surface]
+        :type platforms: List[Platform]
         :param screen: The screen to draw on.
         :type screen: pygame.Surface
         """
@@ -316,7 +269,10 @@ class Player(Entity):
         self.ycor += self.y_vel * dt
         self.on_ground = False
 
+        # pylint: disable=attribute-defined-outside-init
         self.topleft = (self.xcor, self.ycor)
+        # pylint: disable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
-        self.check_surface_collisions(platforms)
+        self.interp(dt)
+        self.check_platform_collisions(platforms)

@@ -4,7 +4,6 @@ The main module of the project. Runs the gameloop.
 """
 
 import os
-from typing import List
 
 import pygame
 
@@ -35,17 +34,23 @@ plr: Entities.Player = Entities.Player(
     250,
     10,
     10,
+    True,
     (255, 0, 0)
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
-collision_platforms: List[Level.Surface] = [
-    Level.Surface(0, 500, 800, 50, True),
-    Level.Surface(400, 400, 200, 200, True),
-    Level.Surface(0, 300, 200, 50, True)
-]
+platforms: Level.Group = Level.Group(
+    Level.Platform(0, 500, 1400, 50, True),
+    Level.Platform(400, 400, 400, 200, True),
+    Level.Platform(0, 300, 200, 50, True)
+)
 
-jump_flag: bool = False
+screen_objects: Level.Group = Level.Group(
+    platforms
+)
+
+jump_debounce: bool = False
+dash_debounce: bool = False
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -59,39 +64,59 @@ while True:
 
     # what to do if certain keys are pressed
     keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
         plr.move_left(dt)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         plr.move_right(dt)
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_w] or keys[pygame.K_UP]:
         if plr.on_ground:
             plr.jump()
-            start_time = pygame.time.get_ticks()
-            jump_flag = True
-        elif not jump_flag and not plr.double_jump_debounce:
+            start_time_j = pygame.time.get_ticks()
+            jump_debounce = True
+        elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_k]:
-        plr.moveto(500, 200, 1, interp.ease_in_out_quart)
+    if keys[pygame.K_j] and not dash_debounce:
+        plr.moveto(
+            plr.xcor - 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+
+        start_time_i = pygame.time.get_ticks()
+        dash_debounce = True
+    if keys[pygame.K_k] and not dash_debounce:
+        plr.moveto(
+            plr.xcor + 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+
+        start_time_i = pygame.time.get_ticks()
+        dash_debounce = True
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
     if keys[pygame.K_LSHIFT]:
         plr.test_dist(dt)
 
     # run any update logic for the player
-    plr.interp(dt)
-    plr.update(dt, collision_platforms, screen)
+    plr.update(dt, platforms)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
 
     plr.draw(screen)
-
-    for platform in collision_platforms:
-        platform.draw(screen)
-
     healthbar.update(screen)
 
-    if jump_flag and pygame.time.get_ticks() - start_time >= 400:
-        jump_flag = False
+    platforms.draw(screen)
+
+    if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
+        jump_debounce = False
+
+    if dash_debounce and pygame.time.get_ticks() - start_time_i >= 400 and plr.on_ground:
+        dash_debounce = False
 
     pygame.display.flip()
