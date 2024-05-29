@@ -40,8 +40,8 @@ plr: Entities.Player = Entities.Player(
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
 platforms: Level.Group = Level.Group(
-    Level.Platform(0, 500, 800, 50, True),
-    Level.Platform(400, 400, 200, 200, True),
+    Level.Platform(0, 500, 1400, 50, True),
+    Level.Platform(400, 400, 400, 200, True),
     Level.Platform(0, 300, 200, 50, True)
 )
 
@@ -49,10 +49,8 @@ screen_objects: Level.Group = Level.Group(
     platforms
 )
 
-print(platforms.objects.keys())
-
 jump_debounce: bool = False
-interp_debounce: bool = False
+dash_debounce: bool = False
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -77,7 +75,18 @@ while True:
             jump_debounce = True
         elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_k] and not interp_debounce:
+    if keys[pygame.K_j] and not dash_debounce:
+        plr.moveto(
+            plr.xcor - 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+
+        start_time_i = pygame.time.get_ticks()
+        dash_debounce = True
+    if keys[pygame.K_k] and not dash_debounce:
         plr.moveto(
             plr.xcor + 250,
             plr.ycor,
@@ -87,12 +96,11 @@ while True:
         )
 
         start_time_i = pygame.time.get_ticks()
-        interp_debounce = True
+        dash_debounce = True
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
     # run any update logic for the player
-    plr.interp(dt)
     plr.update(dt, platforms)
 
     # redraw the updated items on the screen
@@ -106,7 +114,7 @@ while True:
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
 
-    if interp_debounce and pygame.time.get_ticks() - start_time_i >= 400 and plr.on_ground:
-        interp_debounce = False
+    if dash_debounce and pygame.time.get_ticks() - start_time_i >= 400 and plr.on_ground:
+        dash_debounce = False
 
     pygame.display.flip()
