@@ -139,6 +139,7 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
+
                     # bottom of platform collision
                     elif self.coords.top() < platform.coords.bottom() \
                             and self.coords.bottom() > platform.coords.bottom():
@@ -148,10 +149,19 @@ class Entity(Hitbox):
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
                     if self.coords.right() > platform.coords.left() \
-                            and self.coords.left() < platform.coords.left():
+                            and self.coords.right() < platform.coords.center_x():
+                        # reset interp data to stop movement if a collision is detected
+                        self.interp_data.moving = False
+                        self.interp_data.target_pos = (self.xcor, self.ycor)
+
                         self.xcor = platform.coords.left() - self.width
+
                     elif self.coords.left() < platform.coords.right() \
-                            and self.coords.right() > platform.coords.right():
+                            and self.coords.left() > platform.coords.center_x():
+                        # reset interp data to stop movement if a collision is detected
+                        self.interp_data.moving = False
+                        self.interp_data.target_pos = (self.xcor, self.ycor)
+
                         self.xcor = platform.coords.right()
 
     def update(
@@ -243,4 +253,5 @@ class Player(Entity):
         # pylint: disable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
+        self.interp(dt)
         self.check_platform_collisions(platforms)
