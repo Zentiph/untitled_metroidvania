@@ -59,7 +59,8 @@ class Entity(Hitbox):
         self.speed: int | float = speed
         self.on_ground: bool = False
         self.double_jump_debounce: bool = True
-
+        self.face_lf: bool = False
+        self.face_rt: bool = False
         self.health: int | float = health
         self.max_health: int | float = max_health
 
@@ -77,6 +78,8 @@ class Entity(Hitbox):
 
         check_type(dt, int, float)
         self.xcor -= self.speed * dt
+        self.face_lf = True
+        self.face_rt = False
 
     def move_right(
         self,
@@ -90,6 +93,8 @@ class Entity(Hitbox):
 
         check_type(dt, int, float)
         self.xcor += self.speed * dt
+        self.face_lf = False
+        self.face_rt = True
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity if on the ground.
