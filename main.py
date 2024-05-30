@@ -75,8 +75,9 @@ while True:
             jump_debounce = True
         elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_LSHIFT] and not dash_debounce:
+    if (keys[pygame.K_LSHIFT] or keys[pygame.K_j]) and not dash_debounce:
         if plr.face_rt:
+            
             plr.moveto(
             plr.xcor + 250,
             plr.ycor,

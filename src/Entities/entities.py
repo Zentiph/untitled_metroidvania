@@ -144,13 +144,17 @@ class Entity(Hitbox):
                         self.interp_data.moving = False
                         self.interp_data.target_pos = (self.xcor, self.ycor)
 
-                        self.xcor = platform.coords.left() - self.width
+                        if self.face_rt:
+                            self.xcor = platform.coords.left() - self.width
+                        elif self.face_lf:
+                            self.xcor = platform.coords.right()
 
                     elif self.coords.left() < platform.coords.right() \
                             and self.coords.left() > platform.coords.center_x():
                         # reset interp data to stop movement if a collision is detected
                         self.interp_data.moving = False
                         self.interp_data.target_pos = (self.xcor, self.ycor)
+                        print("collided")
 
                         self.xcor = platform.coords.right()
 
@@ -229,7 +233,7 @@ class Player(Entity):
         self.health -= dmg
         if self.health < 1:
             self.health = 0
-
+        
     def update(
         self,
         dt: float,

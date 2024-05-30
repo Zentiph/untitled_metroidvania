@@ -286,7 +286,7 @@ class Hitbox(pygame.Rect):
         self.interp_data.easing_type = easing_type
         self.interp_data.elapsed_time = 0
         self.interp_data.moving = True
-
+        
     # updates
 
     def interp(
