@@ -75,7 +75,7 @@ while True:
             jump_debounce = True
         elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_j] and not dash_debounce:
+    """if keys[pygame.K_j] and not dash_debounce :
         plr.moveto(
             plr.xcor - 250,
             plr.ycor,
@@ -96,11 +96,31 @@ while True:
         )
 
         start_time_i = pygame.time.get_ticks()
-        dash_debounce = True
+        dash_debounce = True"""
+    
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
-    if keys[pygame.K_LSHIFT]:
-        plr.test_dist(dt)
+    if keys[pygame.K_LSHIFT] and not dash_debounce:
+        if plr.face_rt:
+            plr.moveto(
+            plr.xcor + 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+        if plr.face_lf:
+             plr.moveto(
+            plr.xcor - 250,
+            plr.ycor,
+            0.2,
+            interp.ease_out_circ,
+            False
+        )
+        start_time_i = pygame.time.get_ticks()
+        dash_debounce = True
+
+        
 
     # run any update logic for the player
     plr.update(dt, platforms)

@@ -61,12 +61,13 @@ class Entity(Hitbox):
         self.double_jump_debounce: bool = True
         self.can_dash: bool = False
         self.num_dashes: int | float = 0
-
+        self.face_rt: bool = False
+        self.face_lf: bool = False
         self.health: int | float = health
         self.max_health: int | float = max_health
-
+        
     # movement
-
+        
     def move_left(
         self,
         dt: int | float
@@ -80,6 +81,8 @@ class Entity(Hitbox):
         check_type(dt, int, float)
         self.xcor -= self.speed * dt
         self.x_vel = -self.speed
+        self.face_lf = True
+        self.face_rt = False
 
     def move_right(
         self,
@@ -94,6 +97,8 @@ class Entity(Hitbox):
         check_type(dt, int, float)
         self.xcor += self.speed * dt
         self.x_vel = self.speed
+        self.face_lf = False
+        self.face_rt = True
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity if on the ground.
@@ -113,22 +118,7 @@ class Entity(Hitbox):
             self.y_vel = -500
             self.double_jump_debounce = True
     
-    """def dash(self) -> None:
-       Increases the entity's horizontal velocity if
-        not on the ground and if it is available
-        if self.can_dash and self.num_dashes < 2:
-            if self.x_vel < 0:
-                    
-            elif self.x_vel > 0: """
-    
-    def test_dist(
-        self,
-    ) -> None:
-        self.xcor += 250
-        self.moveto("", self.ycor)
-        
-        
-            
+  
 
     # updates
 
