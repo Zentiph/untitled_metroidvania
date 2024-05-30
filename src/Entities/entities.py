@@ -67,12 +67,12 @@ class Entity(Hitbox):
 
     def move_left(
         self,
-        dt: int | float
+        dt: float
     ) -> None:
         """Moves the entity left.
 
         :param dt: Delta time.
-        :type dt: int | float
+        :type dt: float
         """
 
         check_type(dt, int, float)
@@ -80,12 +80,12 @@ class Entity(Hitbox):
 
     def move_right(
         self,
-        dt: int | float
+        dt: float
     ) -> None:
         """Moves the entity right.
 
         :param dt: Delta time.
-        :type dt: int | float
+        :type dt: float
         """
 
         check_type(dt, int, float)
@@ -131,21 +131,6 @@ class Entity(Hitbox):
             if self.has_collision and platform.has_collision and self.colliderect(platform):
                 collision_area = self.clip(platform)
 
-                # vertical collisions checks (floor and ceiling)
-                if collision_area.width - 3 > collision_area.height:
-                    # top of platform collision
-                    if self.coords.bottom() > platform.coords.top() \
-                            and self.coords.top() < platform.coords.top():
-                        self.ycor = platform.coords.top() - self.height
-                        self.y_vel = 0
-                        self.on_ground = True
-
-                    # bottom of platform collision
-                    elif self.coords.top() < platform.coords.bottom() \
-                            and self.coords.bottom() > platform.coords.bottom():
-                        self.ycor = platform.coords.bottom()
-                        self.y_vel = 0
-
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
                     if self.coords.right() > platform.coords.left() \
@@ -164,15 +149,30 @@ class Entity(Hitbox):
 
                         self.xcor = platform.coords.right()
 
+                # vertical collisions checks (floor and ceiling)
+                if collision_area.width - 3 > collision_area.height:
+                    # top of platform collision
+                    if self.coords.bottom() > platform.coords.top() \
+                            and self.coords.top() < platform.coords.top():
+                        self.ycor = platform.coords.top() - self.height
+                        self.y_vel = 0
+                        self.on_ground = True
+
+                    # bottom of platform collision
+                    elif self.coords.top() < platform.coords.bottom() \
+                            and self.coords.bottom() > platform.coords.bottom():
+                        self.ycor = platform.coords.bottom()
+                        self.y_vel = 0
+
     def update(
         self,
-        dt: int | float,
+        dt: float,
         platforms: List[Platform]
     ) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
-        :type dt: int | float
+        :type dt: float
         :param platforms: A list of platforms necessary for collision checks.
         :type platforms: List[Platform]
         """
@@ -227,13 +227,13 @@ class Player(Entity):
 
     def update(
         self,
-        dt: int | float,
+        dt: float,
         platforms: List[Platform],
     ) -> None:
         """Runs update checks on the player.
 
         :param dt: Delta time.
-        :type dt: int | float
+        :type dt: float
         :param platforms: A list of platforms necessary for collision checks.
         :type platforms: List[Platform]
         :param screen: The screen to draw on.

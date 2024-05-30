@@ -29,19 +29,19 @@ pygame.display.set_caption("Untitled Metroidvania.")
 plr: Entities.Player = Entities.Player(
     50,
     0,
-    50,
-    80,
-    250,
-    10,
-    10,
-    True,
-    (255, 0, 0)
+    width=50,
+    height=80,
+    speed=250,
+    health=10,
+    max_health=10,
+    has_collision=True,
+    color=(255, 0, 0)
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
 platforms: Level.Group = Level.Group(
     Level.Platform(0, 500, 1400, 50, True),
-    Level.Platform(400, 400, 400, 200, True),
+    Level.Platform(400, 400, 120, 200, True),
     Level.Platform(0, 300, 200, 50, True)
 )
 
@@ -77,7 +77,7 @@ while True:
             plr.double_jump()
     if keys[pygame.K_j] and not dash_debounce:
         plr.moveto(
-            plr.xcor - 250,
+            plr.xcor - 150,
             plr.ycor,
             0.2,
             interp.ease_out_circ,
@@ -88,7 +88,7 @@ while True:
         dash_debounce = True
     if keys[pygame.K_k] and not dash_debounce:
         plr.moveto(
-            plr.xcor + 250,
+            plr.xcor + 150,
             plr.ycor,
             0.2,
             interp.ease_out_circ,
