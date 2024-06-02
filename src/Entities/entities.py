@@ -158,6 +158,10 @@ class Entity(Hitbox):
                         self.y_vel = 0
                         self.on_ground = True
 
+                        # set the interp target pos y-coordinate to the player's coordinate
+                        # to prevent the jittery behavior when dashing near a floor/ceiling.
+                        # basically the interp function kept moving the player into the block after
+                        # the collision moves the player out. this fixes that
                         self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
 
                     # bottom of platform collision
@@ -166,6 +170,10 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
+                        # set the interp target pos y-coordinate to the player's coordinate
+                        # to prevent the jittery behavior when dashing near a floor/ceiling.
+                        # basically the interp function kept moving the player into the block after
+                        # the collision moves the player out. this fixes that
                         self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
 
     def update(
