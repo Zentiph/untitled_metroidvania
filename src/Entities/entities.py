@@ -158,11 +158,15 @@ class Entity(Hitbox):
                         self.y_vel = 0
                         self.on_ground = True
 
+                        self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
+
                     # bottom of platform collision
                     elif self.coords.top() < platform.coords.bottom() \
                             and self.coords.bottom() > platform.coords.bottom():
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
+
+                        self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
 
     def update(
         self,
