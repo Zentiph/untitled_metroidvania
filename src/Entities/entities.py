@@ -3,13 +3,14 @@
 Module containing entity related functionality.
 """
 
-from typing import Tuple
+from typing import List, Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
 from ..Level import Group, Platform
 
 
+# pylint: disable=too-many-instance-attributes
 class Entity(Hitbox):
     """Base class for entity objects."""
 
@@ -61,6 +62,11 @@ class Entity(Hitbox):
         self.health: int | float = health
         self.max_health: int | float = max_health
 
+        self.facing_left: bool = False
+        self.facing_right: bool = True
+
+        self.stage = 1
+
     # movement
 
     def move_left(self, dt: float) -> None:
@@ -73,6 +79,9 @@ class Entity(Hitbox):
         check_type(dt, int, float)
         self.xcor -= self.speed * dt
 
+        self.facing_left = True
+        self.facing_right = False
+
     def move_right(self, dt: float) -> None:
         """Moves the entity right.
 
@@ -82,6 +91,9 @@ class Entity(Hitbox):
 
         check_type(dt, int, float)
         self.xcor += self.speed * dt
+
+        self.facing_left = False
+        self.facing_right = True
 
     def jump(self) -> None:
         """Increases the entity's vertical velocity if on the ground."""
@@ -106,7 +118,7 @@ class Entity(Hitbox):
         """Run checks on the entity's collisions with other objects.
 
         :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Platform]
+        :type platforms: Group
         """
 
         check_type(platforms, Group)
@@ -182,13 +194,13 @@ class Entity(Hitbox):
                             self.ycor,
                         )
 
-    def update_(self, dt: float, platforms: Group) -> None:
+    def update_(self, dt: float, objects: List[Group]) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
         :type dt: float
-        :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Platform]
+        :param objects: A list of objects necessary for collision checks.
+        :type objects: List[Group]
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
@@ -200,7 +212,7 @@ class Entity(Hitbox):
         # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
-        self.check_platform_collisions(platforms)
+        self.check_platform_collisions(objects[0])
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draws the entity to the screen.
@@ -234,14 +246,14 @@ class Player(Entity):
     def update_(
         self,
         dt: float,
-        platforms: Group,
+        objects: List[Group],
     ) -> None:
         """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: float
-        :param platforms: A list of platforms necessary for collision checks.
-        :type platforms: List[Platform]
+        :param objects: A list of objects necessary for collision checks.
+        :type objects: List[Group]
         :param screen: The screen to draw on.
         :type screen: pygame.Surface
         """
@@ -260,4 +272,4 @@ class Player(Entity):
         self.coords.update(self.xcor, self.ycor)
 
         self.interp(dt)
-        self.check_platform_collisions(platforms)
+        self.check_platform_collisions(objects[0])

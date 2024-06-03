@@ -119,21 +119,65 @@ class Coordinates:
 
         return (2 * self.xcor + self.width) / 2, (2 * self.ycor + self.height) / 2
 
-    def is_on_screen(self) -> bool:
-        """Checks if the entity is on the screen.
+    def is_off_screen_right(self) -> bool:
+        """Checks if the entity is off-screen to the right.
 
-        :return: Whether the entity is on the screen.
+        :return: Whether the entity is off-screen to the right.
+        :rtype: bool
+        """
+
+        if self.xcor + self.width > SCREEN_WIDTH:
+            return True
+        return False
+
+    def is_off_screen_left(self) -> bool:
+        """Checks if the entity is off-screen to the left.
+
+        :return: Whether the entity is off-screen to the left.
+        :rtype: bool
+        """
+
+        if self.xcor < 0:
+            return True
+        return False
+
+    def is_off_screen_up(self) -> bool:
+        """Checks if the entity is off-screen above.
+
+        :return: Whether the entity is off-screen above.
+        :rtype: bool
+        """
+
+        if self.ycor + self.height < 0:
+            return True
+        return False
+
+    def is_off_screen_down(self) -> bool:
+        """Checks if the entity is off-screen below.
+
+        :return: Whether the entity is off-screen below.
+        :rtype: bool
+        """
+
+        if self.ycor > SCREEN_HEIGHT:
+            return True
+        return False
+
+    def is_off_screen(self) -> bool:
+        """Checks if the entity is off-screen.
+
+        :return: Whether the entity is off-screen.
         :rtype: bool
         """
 
         if (
             self.xcor < 0
-            or self.xcor > SCREEN_WIDTH
-            or self.ycor < 0
+            or self.xcor + self.width > SCREEN_WIDTH
+            or self.ycor + self.height < 0
             or self.ycor > SCREEN_HEIGHT
         ):
-            return False
-        return True
+            return True
+        return False
 
 
 class InterpolationData:

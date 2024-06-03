@@ -4,13 +4,13 @@ The main module of the project. Runs the gameloop.
 """
 
 import os
+from typing import List
 
 import pygame
-
 from screeninfo import get_monitors
-from src import Entities, GUI, Internal, Level
-from src.Internal import interp
 
+from src import GUI, Entities, Internal, Level, Stages
+from src.Internal import interp
 
 # get the main monitor info,
 # then set the pygame window to open in the center of the screen
@@ -25,10 +25,10 @@ screen: pygame.Surface = pygame.display.set_mode(
 )
 pygame.display.set_caption("Untitled Metroidvania.")
 
-# set the player and collision platforms
+# setup the player to spawn in stage 1
 plr: Entities.Player = Entities.Player(
-    50,
-    0,
+    100,
+    770,
     width=50,
     height=80,
     speed=250,
@@ -37,26 +37,16 @@ plr: Entities.Player = Entities.Player(
     has_collision=True,
     color=(255, 0, 0),
 )
+
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
-platforms: Level.Group = Level.Group(
-    Level.Platform(0, 500, 1400, 50, True),
-    Level.Platform(400, 400, 120, 200, True),
-    Level.Platform(0, 300, 200, 50, True),
-)
-
-spikes: Level.Group = Level.Group(
-    Level.Spike(800, 450, 50, 50),
-    Level.Spike(850, 450, 50, 50),
-    Level.Spike(900, 450, 50, 50),
-    Level.Spike(950, 450, 50, 50),
-    Level.Spike(1000, 450, 50, 50),
-)
-
-screen_objects: Level.Group = Level.Group(platforms)
+screen_objects: List[Level.Group] = Stages.STAGES[1]
 
 jump_debounce: bool = False
 dash_debounce: bool = False
+
+# the stage the player was in last frame
+previous_stage: int | str = plr.stage
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -88,9 +78,9 @@ while True:
 
     # dashing
     if keys[pygame.K_LSHIFT] and not dash_debounce:
-        if plr.face_rt:
+        if plr.facing_right:
             plr.moveto(plr.xcor + 250, plr.ycor, 0.2, interp.ease_out_circ, False)
-        if plr.face_lf:
+        if plr.facing_left:
             plr.moveto(plr.xcor - 250, plr.ycor, 0.2, interp.ease_out_circ, False)
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
@@ -101,16 +91,29 @@ while True:
         pygame.quit()
 
     # run any update logic for the player
-    plr.update_(dt, platforms)
+    plr.update_(dt, screen_objects)
+
+    # update the stage objects if the player changes screens
+    if previous_stage != plr.stage:
+        screen_objects = Stages.STAGES[plr.stage]
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
 
     plr.draw(screen)
-    healthbar.update(screen)
 
-    platforms.draw(screen)
-    spikes.draw(screen)
+    screen_objects[0].draw(screen)
+
+    # attempt to draw spikes and lava but avoid errors if there are none
+    try:
+        screen_objects[1].draw(screen)
+    except IndexError:
+        pass
+
+    try:
+        screen_objects[2].draw(screen)
+    except IndexError:
+        pass
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
@@ -121,5 +124,11 @@ while True:
         and plr.on_ground
     ):
         dash_debounce = False
+
+    # the healthbar is updated last so it is drawn on top of everything
+    healthbar.update(screen)
+
+    # update the previous frame stage
+    previous_stage = plr.stage
 
     pygame.display.flip()
