@@ -45,6 +45,14 @@ platforms: Level.Group = Level.Group(
     Level.Platform(0, 300, 200, 50, True),
 )
 
+spikes: Level.Group = Level.Group(
+    Level.Spike(800, 450, 50, 50),
+    Level.Spike(850, 450, 50, 50),
+    Level.Spike(900, 450, 50, 50),
+    Level.Spike(950, 450, 50, 50),
+    Level.Spike(1000, 450, 50, 50),
+)
+
 screen_objects: Level.Group = Level.Group(platforms)
 
 jump_debounce: bool = False
@@ -96,6 +104,7 @@ while True:
     healthbar.update(screen)
 
     platforms.draw(screen)
+    spikes.draw(screen)
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False

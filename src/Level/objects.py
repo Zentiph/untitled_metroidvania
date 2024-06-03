@@ -91,16 +91,22 @@ class Spike(Hitbox):
         """
 
         check_type(screen, pygame.Surface)
-        # TODO
-        pygame.draw.polygon(
-            screen,
-            self.color,
-            (
-                self.coords.bottom_left(),
-                (self.coords.center_x(), self.coords.top()),
-                self.coords.bottom_right(),
-            ),
+
+        # calculate the points of the spike
+        p1: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor,
+            self.ycor + self.height,
         )
+        p2: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor + self.width / 2,
+            self.ycor,
+        )
+        p3: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor + self.width,
+            self.ycor + self.height,
+        )
+
+        pygame.draw.polygon(screen, self.color, (p1, p2, p3))
 
 
 class Group:
