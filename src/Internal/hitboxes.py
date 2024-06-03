@@ -3,7 +3,7 @@
 Module containing hitbox functionality.
 """
 
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 
 import pygame
 
@@ -11,19 +11,19 @@ from . import interp
 from .checks import check_type
 from .constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
+# custom EasingFunction type used for documentation
 EasingFunction = Callable[[float], float]
 
 
 class Coordinates:
-    """Helper class for storing coordinates and related functions.
-    """
+    """Helper class for storing coordinates and related functions."""
 
     def __init__(
         self,
         xcor: int | float,
         ycor: int | float,
         width: int | float,
-        height: int | float
+        height: int | float,
     ) -> None:
         """Initializer for a Coordinates object.
 
@@ -49,11 +49,7 @@ class Coordinates:
 
         self.y_vel: int | float = 0
 
-    def update(
-        self,
-        xcor: int | float,
-        ycor: int | float
-    ) -> None:
+    def update(self, xcor: int | float, ycor: int | float) -> None:
         """Updates the Coordinates class with new values.
 
         :param xcor: The x coordinate.
@@ -65,72 +61,61 @@ class Coordinates:
         check_type(xcor, int, float)
         check_type(ycor, int, float)
 
-        self.xcor: int | float = xcor
-        self.ycor: int | float = ycor
+        self.xcor = xcor
+        self.ycor = ycor
 
     def left(self) -> int | float:
-        """Gets the leftmost x-coordinate of the entity.
-        """
+        """Gets the leftmost x-coordinate of the entity."""
 
         return self.xcor
 
     def right(self) -> int | float:
-        """Gets the rightmost x-coordinate of the entity.
-        """
+        """Gets the rightmost x-coordinate of the entity."""
 
         return self.xcor + self.width
 
     def center_x(self) -> int | float:
-        """Gets the center x-coordinate of the entity.
-        """
+        """Gets the center x-coordinate of the entity."""
 
         return (2 * self.xcor + self.width) / 2
 
     def top(self) -> int | float:
-        """Gets the topmost x-coordinate of the entity.
-        """
+        """Gets the topmost x-coordinate of the entity."""
 
         return self.ycor
 
     def bottom(self) -> int | float:
-        """Gets the bottommost x-coordinate of the entity.
-        """
+        """Gets the bottommost x-coordinate of the entity."""
 
         return self.ycor + self.height
 
     def center_y(self) -> int | float:
-        """Gets the center y-coordinate of the entity.
-        """
+        """Gets the center y-coordinate of the entity."""
 
         return (2 * self.ycor + self.height) / 2
 
-    def top_left(self) -> int | float:
-        """Gets the top left coordinates of the entity.
-        """
+    def top_left(self) -> Tuple[Union[int, float], Union[int, float]]:
+        """Gets the top left coordinates of the entity."""
 
         return self.xcor, self.ycor
 
-    def top_right(self) -> int | float:
-        """Gets the top right coordinates of the entity.
-        """
+    def top_right(self) -> Tuple[Union[int, float], Union[int, float]]:
+        """Gets the top right coordinates of the entity."""
 
         return self.xcor + self.width, self.ycor
 
-    def bottom_left(self) -> int | float:
-        """Gets the bottom left coordinates of the entity.
-        """
+    def bottom_left(self) -> Tuple[Union[int, float], Union[int, float]]:
+        """Gets the bottom left coordinates of the entity."""
 
         return self.xcor, self.ycor + self.height
 
-    def bottom_right(self) -> int | float:
-        """Gets the bottom right coordinates of the entity.
-        """
+    def bottom_right(self) -> Tuple[Union[int, float], Union[int, float]]:
+        """Gets the bottom right coordinates of the entity."""
 
         return self.xcor + self.width, self.ycor + self.height
 
-    def center(self) -> int | float:
-        """Gets the center coordinates of the entity.
-        """
+    def center(self) -> Tuple[Union[int, float], Union[int, float]]:
+        """Gets the center coordinates of the entity."""
 
         return (2 * self.xcor + self.width) / 2, (2 * self.ycor + self.height) / 2
 
@@ -141,33 +126,36 @@ class Coordinates:
         :rtype: bool
         """
 
-        if self.xcor < 0 or self.xcor > SCREEN_WIDTH \
-                or self.ycor < 0 or self.ycor > SCREEN_HEIGHT:
+        if (
+            self.xcor < 0
+            or self.xcor > SCREEN_WIDTH
+            or self.ycor < 0
+            or self.ycor > SCREEN_HEIGHT
+        ):
             return False
         return True
 
 
 class InterpolationData:
-    """Helper class for storing interpolation data.
-    """
+    """Helper class for storing interpolation data."""
 
     def __init__(
         self,
-        initial_pos: Tuple[int, float],
-        target_pos: Tuple[int, float],
+        initial_pos: Tuple[Union[int, float], Union[int, float]],
+        target_pos: Tuple[Union[int, float], Union[int, float]],
         duration: int | float,
-        easing_type: EasingFunction | None = None
+        easing_type: EasingFunction = interp.linear,
     ) -> None:
-        """"Initializer for the InterpolationData object.
+        """ "Initializer for the InterpolationData object.
 
         :param initial_pos: The initial coordinates.
-        :type initial_pos: Tuple[int, float]
+        :type initial_pos: Tuple[Union[int, float], Union[int, float]]
         :param target_pos: The target coordinates.
-        :type target_pos: Tuple[int, float]
+        :type target_pos: Tuple[Union[int, float], Union[int, float]]
         :param duration: The duration of the interpolation in seconds.
         :type duration: int | float
         :param easing_type: The easing type of the interpolation.
-        :type easing_type: str, optional
+        :type easing_type: EasingFunction, optional
         """
 
         check_type(initial_pos, tuple)
@@ -178,19 +166,18 @@ class InterpolationData:
             check_type(v, int, float)
         check_type(duration, int, float)
 
-        self.initial_pos = initial_pos
-        self.target_pos = target_pos
-        self.duration = duration
+        self.initial_pos: Tuple[Union[int, float], Union[int, float]] = initial_pos
+        self.target_pos: Tuple[Union[int, float], Union[int, float]] = target_pos
+        self.duration: int | float = duration
 
-        self.easing_type = easing_type
+        self.easing_type: EasingFunction = easing_type
 
-        self.elapsed_time = 0
-        self.moving = False
+        self.elapsed_time: int | float = 0
+        self.moving: bool = False
 
 
 class Hitbox(pygame.Rect):
-    """Base class for all hitboxes.
-    """
+    """Base class for all hitboxes."""
 
     def __init__(
         self,
@@ -199,8 +186,7 @@ class Hitbox(pygame.Rect):
         width: int | float,
         height: int | float,
         has_collision: bool = True,
-        color: Tuple[int] = (0, 255, 0)
-
+        color: Tuple[int, int, int] = (0, 255, 0),
     ) -> None:
         """Initializer for the hitbox object.
 
@@ -230,9 +216,7 @@ class Hitbox(pygame.Rect):
             if v < 0 or v > 255:
                 raise ValueError(f"Color value {v} is out of range.")
         if len(color) != 3:
-            raise ValueError(
-                f"Color tuple must be of length 3, not {len(color)}."
-            )
+            raise ValueError(f"Color tuple must be of length 3, not {len(color)}.")
 
         super().__init__(xcor, ycor, width, height)
 
@@ -241,14 +225,10 @@ class Hitbox(pygame.Rect):
         self.y_vel: int | float = 0
 
         self.has_collision = has_collision
-        self.color: Tuple[int] = color
+        self.color: Tuple[int, int, int] = color
 
         self.coords = Coordinates(xcor, ycor, width, height)
-        self.interp_data = InterpolationData(
-            (xcor, ycor),
-            (xcor, ycor),
-            0
-        )
+        self.interp_data = InterpolationData((xcor, ycor), (xcor, ycor), 0)
 
     # movement
 
@@ -258,7 +238,7 @@ class Hitbox(pygame.Rect):
         ycor: int | float,
         duration: int | float,
         easing_type: EasingFunction,
-        disable_collision: bool = True
+        disable_collision: bool = True,
     ) -> None:
         """Moves the hitbox to the specified coordinates.
 
@@ -289,10 +269,7 @@ class Hitbox(pygame.Rect):
 
     # updates
 
-    def interp(
-        self,
-        dt: int | float
-    ) -> None:
+    def interp(self, dt: int | float) -> None:
         """Updates the hitbox's position.
 
         :param dt: Delta time.
@@ -316,18 +293,15 @@ class Hitbox(pygame.Rect):
                 self.xcor = interp.lerp(
                     self.interp_data.initial_pos[0],
                     self.interp_data.target_pos[0],
-                    t_eased
+                    t_eased,
                 )
                 self.ycor = interp.lerp(
                     self.interp_data.initial_pos[1],
                     self.interp_data.target_pos[1],
-                    t_eased
+                    t_eased,
                 )
 
-    def draw(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws the hitbox to the screen.
 
         :param screen: The screen to draw on.
@@ -337,7 +311,5 @@ class Hitbox(pygame.Rect):
         check_type(screen, pygame.Surface)
 
         pygame.draw.rect(
-            screen,
-            self.color,
-            (self.xcor, self.ycor, self.width, self.height)
+            screen, self.color, (self.xcor, self.ycor, self.width, self.height)
         )

@@ -15,9 +15,9 @@ from src.Internal import interp
 # get the main monitor info,
 # then set the pygame window to open in the center of the screen
 MONITOR = get_monitors()[0]
-WINDOW_X: int = MONITOR.width / 2 - Internal.SCREEN_WIDTH / 2
-WINDOW_Y: int = MONITOR.height / 2 - Internal.SCREEN_HEIGHT / 2
-os.environ['SDL_VIDEO_WINDOW_POS'] = f"{WINDOW_X}, {WINDOW_Y}"
+WINDOW_X: int = MONITOR.width // 2 - Internal.SCREEN_WIDTH // 2
+WINDOW_Y: int = MONITOR.height // 2 - Internal.SCREEN_HEIGHT // 2
+os.environ["SDL_VIDEO_WINDOW_POS"] = f"{WINDOW_X}, {WINDOW_Y}"
 pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode(
@@ -35,19 +35,17 @@ plr: Entities.Player = Entities.Player(
     health=10,
     max_health=10,
     has_collision=True,
-    color=(255, 0, 0)
+    color=(255, 0, 0),
 )
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
 platforms: Level.Group = Level.Group(
     Level.Platform(0, 500, 1400, 50, True),
     Level.Platform(400, 400, 120, 200, True),
-    Level.Platform(0, 300, 200, 50, True)
+    Level.Platform(0, 300, 200, 50, True),
 )
 
-screen_objects: Level.Group = Level.Group(
-    platforms
-)
+screen_objects: Level.Group = Level.Group(platforms)
 
 jump_debounce: bool = False
 dash_debounce: bool = False
@@ -76,24 +74,12 @@ while True:
         elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
     if keys[pygame.K_j] and not dash_debounce:
-        plr.moveto(
-            plr.xcor - 150,
-            plr.ycor,
-            0.2,
-            interp.ease_out_circ,
-            False
-        )
+        plr.moveto(plr.xcor - 150, plr.ycor, 0.2, interp.ease_out_circ, False)
 
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
     if keys[pygame.K_k] and not dash_debounce:
-        plr.moveto(
-            plr.xcor + 150,
-            plr.ycor,
-            0.2,
-            interp.ease_out_circ,
-            False
-        )
+        plr.moveto(plr.xcor + 150, plr.ycor, 0.2, interp.ease_out_circ, False)
 
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
@@ -101,7 +87,7 @@ while True:
         pygame.quit()
 
     # run any update logic for the player
-    plr.update(dt, platforms)
+    plr.update_(dt, platforms)
 
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
@@ -114,7 +100,11 @@ while True:
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
 
-    if dash_debounce and pygame.time.get_ticks() - start_time_i >= 400 and plr.on_ground:
+    if (
+        dash_debounce
+        and pygame.time.get_ticks() - start_time_i >= 400
+        and plr.on_ground
+    ):
         dash_debounce = False
 
     pygame.display.flip()

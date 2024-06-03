@@ -3,7 +3,7 @@
 Module containing entity related functionality.
 """
 
-from typing import List, Tuple
+from typing import Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
@@ -11,8 +11,7 @@ from ..Level import Group, Platform
 
 
 class Entity(Hitbox):
-    """Base class for entity objects.
-    """
+    """Base class for entity objects."""
 
     def __init__(
         self,
@@ -24,8 +23,7 @@ class Entity(Hitbox):
         health: int,
         max_health: int,
         has_collision: bool = True,
-        color: Tuple[int] = (255, 255, 255)
-
+        color: Tuple[int, int, int] = (255, 255, 255),
     ) -> None:
         """Initializer for the entity object.
 
@@ -65,10 +63,7 @@ class Entity(Hitbox):
 
     # movement
 
-    def move_left(
-        self,
-        dt: float
-    ) -> None:
+    def move_left(self, dt: float) -> None:
         """Moves the entity left.
 
         :param dt: Delta time.
@@ -78,10 +73,7 @@ class Entity(Hitbox):
         check_type(dt, int, float)
         self.xcor -= self.speed * dt
 
-    def move_right(
-        self,
-        dt: float
-    ) -> None:
+    def move_right(self, dt: float) -> None:
         """Moves the entity right.
 
         :param dt: Delta time.
@@ -92,8 +84,7 @@ class Entity(Hitbox):
         self.xcor += self.speed * dt
 
     def jump(self) -> None:
-        """Increases the entity's vertical velocity if on the ground.
-        """
+        """Increases the entity's vertical velocity if on the ground."""
 
         if self.on_ground:
             self.y_vel -= 500
@@ -111,10 +102,7 @@ class Entity(Hitbox):
 
     # updates
 
-    def check_platform_collisions(
-        self,
-        platforms: Group
-    ) -> None:
+    def check_platform_collisions(self, platforms: Group) -> None:
         """Run checks on the entity's collisions with other objects.
 
         :param platforms: A list of platforms necessary for collision checks.
@@ -128,21 +116,29 @@ class Entity(Hitbox):
 
             # vvv welcome to hell vvv
 
-            if self.has_collision and platform.has_collision and self.colliderect(platform):
+            if (
+                self.has_collision
+                and platform.has_collision
+                and self.colliderect(platform)
+            ):
                 collision_area = self.clip(platform)
 
                 # horizontal collisions checks (left and right walls)
                 if collision_area.height > collision_area.width - 3:
-                    if self.coords.right() > platform.coords.left() \
-                            and self.coords.right() < platform.coords.center_x():
+                    if (
+                        self.coords.right() > platform.coords.left()
+                        and self.coords.right() < platform.coords.center_x()
+                    ):
                         # reset interp data to stop movement if a collision is detected
                         self.interp_data.moving = False
                         self.interp_data.target_pos = (self.xcor, self.ycor)
 
                         self.xcor = platform.coords.left() - self.width
 
-                    elif self.coords.left() < platform.coords.right() \
-                            and self.coords.left() > platform.coords.center_x():
+                    elif (
+                        self.coords.left() < platform.coords.right()
+                        and self.coords.left() > platform.coords.center_x()
+                    ):
                         # reset interp data to stop movement if a collision is detected
                         self.interp_data.moving = False
                         self.interp_data.target_pos = (self.xcor, self.ycor)
@@ -152,8 +148,10 @@ class Entity(Hitbox):
                 # vertical collisions checks (floor and ceiling)
                 if collision_area.width - 3 > collision_area.height:
                     # top of platform collision
-                    if self.coords.bottom() > platform.coords.top() \
-                            and self.coords.top() < platform.coords.top():
+                    if (
+                        self.coords.bottom() > platform.coords.top()
+                        and self.coords.top() < platform.coords.top()
+                    ):
                         self.ycor = platform.coords.top() - self.height
                         self.y_vel = 0
                         self.on_ground = True
@@ -162,11 +160,16 @@ class Entity(Hitbox):
                         # to prevent the jittery behavior when dashing near a floor/ceiling.
                         # basically the interp function kept moving the player into the block after
                         # the collision moves the player out. this fixes that
-                        self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
+                        self.interp_data.target_pos = (
+                            self.interp_data.target_pos[0],
+                            self.ycor,
+                        )
 
                     # bottom of platform collision
-                    elif self.coords.top() < platform.coords.bottom() \
-                            and self.coords.bottom() > platform.coords.bottom():
+                    elif (
+                        self.coords.top() < platform.coords.bottom()
+                        and self.coords.bottom() > platform.coords.bottom()
+                    ):
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
@@ -174,13 +177,12 @@ class Entity(Hitbox):
                         # to prevent the jittery behavior when dashing near a floor/ceiling.
                         # basically the interp function kept moving the player into the block after
                         # the collision moves the player out. this fixes that
-                        self.interp_data.target_pos = (self.interp_data.target_pos[0], self.ycor)
+                        self.interp_data.target_pos = (
+                            self.interp_data.target_pos[0],
+                            self.ycor,
+                        )
 
-    def update(
-        self,
-        dt: float,
-        platforms: List[Platform]
-    ) -> None:
+    def update_(self, dt: float, platforms: Group) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
@@ -194,16 +196,13 @@ class Entity(Hitbox):
         self.on_ground = False
 
         # pylint: disable=attribute-defined-outside-init
-        self.topleft = (self.xcor, self.ycor)
+        self.topleft = (int(self.xcor), int(self.ycor))
         # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
         self.check_platform_collisions(platforms)
 
-    def draw(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws the entity to the screen.
 
         :param screen: The screen to draw on.
@@ -213,20 +212,14 @@ class Entity(Hitbox):
         check_type(screen, pygame.Surface)
 
         pygame.draw.rect(
-            screen,
-            self.color,
-            (self.xcor, self.ycor, self.width, self.height)
+            screen, self.color, (self.xcor, self.ycor, self.width, self.height)
         )
 
 
 class Player(Entity):
-    """Player class.
-    """
+    """Player class."""
 
-    def take_damage(
-        self,
-        dmg: int
-    ) -> None:
+    def take_damage(self, dmg: int) -> None:
         """Damages the player with the given damage.
 
         :param dmg: The amount of damage to take.
@@ -237,10 +230,11 @@ class Player(Entity):
         if self.health < 1:
             self.health = 0
 
-    def update(
+    # it's named update_ to prevent overriding an existing class method of pygame.Rect
+    def update_(
         self,
         dt: float,
-        platforms: List[Platform],
+        platforms: Group,
     ) -> None:
         """Runs update checks on the player.
 
@@ -261,7 +255,7 @@ class Player(Entity):
         self.on_ground = False
 
         # pylint: disable=attribute-defined-outside-init
-        self.topleft = (self.xcor, self.ycor)
+        self.topleft = (int(self.xcor), int(self.ycor))
         # pylint: disable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
