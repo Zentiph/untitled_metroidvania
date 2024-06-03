@@ -3,11 +3,12 @@
 Module containing entity related functionality.
 """
 
-from typing import List, Tuple
+from typing import Tuple
 
 import pygame
 from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
 from ..Level import Group, Platform
+from ..Stages import TextInfo
 
 
 # pylint: disable=too-many-instance-attributes
@@ -194,13 +195,17 @@ class Entity(Hitbox):
                             self.ycor,
                         )
 
-    def update_(self, dt: float, objects: List[Group]) -> None:
+    def update_(
+        self,
+        dt: float,
+        objects: Tuple[Group, Group | None, Group | None, TextInfo | None],
+    ) -> None:
         """Runs update checks on the entity.
 
         :param dt: Delta time.
         :type dt: float
         :param objects: A list of objects necessary for collision checks.
-        :type objects: List[Group]
+        :type objects: Tuple[Group, Group | None, Group | None, TextInfo | None]
         """
 
         self.y_vel += GRAVITY_ACCELERATION * dt
@@ -246,14 +251,14 @@ class Player(Entity):
     def update_(
         self,
         dt: float,
-        objects: List[Group],
+        objects: Tuple[Group, Group | None, Group | None, TextInfo | None],
     ) -> None:
         """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: float
         :param objects: A list of objects necessary for collision checks.
-        :type objects: List[Group]
+        :type objects: Tuple[Group, Group | None, Group | None, TextInfo | None]
         :param screen: The screen to draw on.
         :type screen: pygame.Surface
         """

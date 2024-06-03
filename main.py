@@ -4,7 +4,7 @@ The main module of the project. Runs the gameloop.
 """
 
 import os
-from typing import List
+from typing import Tuple
 
 import pygame
 from screeninfo import get_monitors
@@ -40,7 +40,9 @@ plr: Entities.Player = Entities.Player(
 
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
-screen_objects: List[Level.Group] = Stages.STAGES[1]
+screen_objects: Tuple[
+    Level.Group, Level.Group | None, Level.Group | None, Stages.TextInfo | None
+] = Stages.STAGES[1]
 
 jump_debounce: bool = False
 dash_debounce: bool = False
@@ -104,16 +106,20 @@ while True:
 
     screen_objects[0].draw(screen)
 
-    # attempt to draw spikes and lava but avoid errors if there are none
-    try:
+    # draw the objects if they are not None
+    if screen_objects[1]:
         screen_objects[1].draw(screen)
-    except IndexError:
-        pass
-
-    try:
+    if screen_objects[2]:
         screen_objects[2].draw(screen)
-    except IndexError:
-        pass
+
+    stage_text = screen_objects[3]
+    if stage_text:
+        screen.blit(
+            pygame.font.SysFont("8514oem", stage_text.size).render(
+                stage_text.msg, False, stage_text.color
+            ),
+            (stage_text.xcor + 50, stage_text.ycor),
+        )
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
