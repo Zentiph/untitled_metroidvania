@@ -70,27 +70,33 @@ while True:
 
     # what to do if certain keys are pressed
     keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
+
+    # walking
     if keys[pygame.K_a] or keys[pygame.K_LEFT]:
         plr.move_left(dt)
     if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         plr.move_right(dt)
-    if keys[pygame.K_w] or keys[pygame.K_UP]:
+
+    # jumping
+    if keys[pygame.K_w] or keys[pygame.K_UP] or keys[pygame.K_SPACE]:
         if plr.on_ground:
             plr.jump()
             start_time_j = pygame.time.get_ticks()
             jump_debounce = True
         elif not jump_debounce and not plr.double_jump_debounce:
             plr.double_jump()
-    if keys[pygame.K_j] and not dash_debounce:
-        plr.moveto(plr.xcor - 150, plr.ycor, 0.2, interp.ease_out_circ, False)
 
+    # dashing
+    if keys[pygame.K_LSHIFT] and not dash_debounce:
+        if plr.face_rt:
+            plr.moveto(plr.xcor + 250, plr.ycor, 0.2, interp.ease_out_circ, False)
+        if plr.face_lf:
+            plr.moveto(plr.xcor - 250, plr.ycor, 0.2, interp.ease_out_circ, False)
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
-    if keys[pygame.K_k] and not dash_debounce:
-        plr.moveto(plr.xcor + 150, plr.ycor, 0.2, interp.ease_out_circ, False)
 
-        start_time_i = pygame.time.get_ticks()
-        dash_debounce = True
+    # exit game
+    # maybe we'll add a menu later
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
 
