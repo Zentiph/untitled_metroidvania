@@ -148,7 +148,7 @@ class Coordinates:
         :rtype: bool
         """
 
-        if self.ycor + self.height < 0:
+        if self.ycor < 0:
             return True
         return False
 
@@ -159,7 +159,7 @@ class Coordinates:
         :rtype: bool
         """
 
-        if self.ycor > SCREEN_HEIGHT:
+        if self.ycor + self.height > SCREEN_HEIGHT:
             return True
         return False
 
@@ -173,8 +173,8 @@ class Coordinates:
         if (
             self.xcor < 0
             or self.xcor + self.width > SCREEN_WIDTH
-            or self.ycor + self.height < 0
-            or self.ycor > SCREEN_HEIGHT
+            or self.ycor < 0
+            or self.ycor + self.height > SCREEN_HEIGHT
         ):
             return True
         return False
