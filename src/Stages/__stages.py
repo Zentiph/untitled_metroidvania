@@ -8,7 +8,7 @@ from typing import Dict, Tuple, Union
 from ..Internal import SCREEN_HEIGHT, SCREEN_WIDTH
 from ..Level import Group, Platform, Spike
 
-__all__ = ["STAGES", "TextInfo", "_TEST", "_STAGE1"]
+__all__ = ["STAGES", "TextInfo", "DEBUG", "STAGE1"]
 
 
 class TextInfo:
@@ -43,9 +43,14 @@ class TextInfo:
         self.color = color
 
 
-_TEST: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
+DEBUG: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
-    Group(Platform(0, SCREEN_HEIGHT, SCREEN_WIDTH, 50)),
+    Group(
+        Platform(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50),
+        Platform(0, 0, SCREEN_WIDTH, 50),
+        Platform(0, 0, 50, SCREEN_HEIGHT),
+        Platform(SCREEN_WIDTH - 50, 0, 50, SCREEN_HEIGHT),
+    ),
     None,
     None,
     None,
@@ -62,14 +67,14 @@ _TEST: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
 # IMPORTANT: MAKE SURE THAT IF THE STAGE DOES NOT HAVE
 # LAVA, SPIKES, OR TEXT, TO LEAVE THAT PART AS 'None'
 
-_STAGE1: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
+STAGE1: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
     Group(
         Platform(0, 850, 1600, 50),  # floor
         Platform(0, 0, 1600, 50),  # ceiling
         Platform(0, 0, 50, 450),  # left wall
         Platform(0, 800, 50, 100),  # bottom ledge
-        Platform(0, 450, 50, 350, False, (255, 255, 255)),  # walkable wall
+        Platform(0, 450, 50, 350, False, (50, 50, 255)),  # walkable wall
     ),
     None,
     None,
@@ -81,7 +86,7 @@ _STAGE1: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     ),
 )
 
-_STAGE2: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
+STAGE2: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
     Group(
         Platform(0, 850, 1600, 50),  # floor
@@ -122,7 +127,7 @@ _STAGE2: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
 STAGES: Dict[
     Union[int, str], Tuple[Group, Group | None, Group | None, TextInfo | None]
 ] = {
-    "test": _TEST,
-    1: _STAGE1,
-    2: _STAGE2,
+    "DEBUG": DEBUG,
+    1: STAGE1,
+    2: STAGE2,
 }

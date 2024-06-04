@@ -6,8 +6,9 @@ Module containing entity related functionality.
 from typing import Tuple
 
 import pygame
-from ..Internal import check_type, GRAVITY_ACCELERATION, Hitbox
-from ..Level import Group, Platform
+
+from ..Internal import GRAVITY_ACCELERATION, Hitbox, check_type
+from ..Level import Group, Platform, Spike
 from ..Stages import TextInfo
 
 
@@ -66,7 +67,7 @@ class Entity(Hitbox):
         self.facing_left: bool = False
         self.facing_right: bool = True
 
-        self.stage = 1
+        self.stage: int | str = 1
 
     # movement
 
@@ -194,6 +195,18 @@ class Entity(Hitbox):
                             self.interp_data.target_pos[0],
                             self.ycor,
                         )
+
+    def check_spike_collisions(self, spikes: Group) -> None:
+        """Checks for collisions between the entity and the given Spikes.
+
+        :param spikes: A Group of Spike objects.
+        :type spikes: Group
+        """
+
+        check_type(spikes, Group)
+
+        for spike in spikes:
+            check_type(spike, Spike)
 
     def update_(
         self,

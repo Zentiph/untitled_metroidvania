@@ -87,6 +87,12 @@ while True:
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
 
+    # DEBUG ROOM KEYBIND
+    if keys[pygame.K_LCTRL] and keys[pygame.K_d]:
+        plr.xcor = 100
+        plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 50
+        plr.stage = "DEBUG"
+
     # exit game
     # maybe we'll add a menu later
     if keys[pygame.K_ESCAPE]:
