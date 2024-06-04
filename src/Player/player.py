@@ -1,6 +1,6 @@
-"""Entities/entities.py
+"""Player/player.py
 
-Module containing entity related functionality.
+Module containing player related functionality.
 """
 
 from typing import Tuple
@@ -8,13 +8,13 @@ from typing import Tuple
 import pygame
 
 from ..Internal import GRAVITY_ACCELERATION, Hitbox, check_type
-from ..Level import Group, Platform, Spike
+from ..Level import Group, Lava, Platform, Spike
 from ..Stages import TextInfo
 
 
 # pylint: disable=too-many-instance-attributes
-class Entity(Hitbox):
-    """Base class for entity objects."""
+class Player(Hitbox):
+    """Base class for player objects."""
 
     def __init__(
         self,
@@ -28,25 +28,25 @@ class Entity(Hitbox):
         has_collision: bool = True,
         color: Tuple[int, int, int] = (255, 255, 255),
     ) -> None:
-        """Initializer for the entity object.
+        """Initializer for the player object.
 
-        :param xcor: The x position of the entity object.
+        :param xcor: The x position of the player object.
         :type xcor: int | float
-        :param ycor: The y position of the entity object.
+        :param ycor: The y position of the player object.
         :type ycor: int | float
-        :param width: The width of the entity object.
+        :param width: The width of the player object.
         :type width: int | float
-        :param height: The height of the entity object.
+        :param height: The height of the player object.
         :type height: int | float
-        :param speed: The speed of the entity object.
+        :param speed: The speed of the player object.
         :type speed: int | float
-        :param health: The health of the entity object.
+        :param health: The health of the player object.
         :type health: int
-        :param max_health: The maximum health of the entity object.
+        :param max_health: The maximum health of the player object.
         :type max_health: int
-        :param has_collision: Whether the entity object has collision.
+        :param has_collision: Whether the player object has collision.
         :type has_collision: bool, optional
-        :param color: The color of the entity object.
+        :param color: The color of the player object.
         :type color: Tuple[int]
         """
 
@@ -69,10 +69,13 @@ class Entity(Hitbox):
 
         self.stage: int | str = 1
 
+        # i-frames used when taking damage
+        self.i_frames: int = 0
+
     # movement
 
     def move_left(self, dt: float) -> None:
-        """Moves the entity left.
+        """Moves the player left.
 
         :param dt: Delta time.
         :type dt: float
@@ -85,7 +88,7 @@ class Entity(Hitbox):
         self.facing_right = False
 
     def move_right(self, dt: float) -> None:
-        """Moves the entity right.
+        """Moves the player right.
 
         :param dt: Delta time.
         :type dt: float
@@ -98,7 +101,7 @@ class Entity(Hitbox):
         self.facing_right = True
 
     def jump(self) -> None:
-        """Increases the entity's vertical velocity if on the ground."""
+        """Increases the player's vertical velocity if on the ground."""
 
         if self.on_ground:
             self.y_vel -= 500
@@ -106,7 +109,7 @@ class Entity(Hitbox):
             self.double_jump_debounce = False
 
     def double_jump(self) -> None:
-        """Increments the entity's vertical velocity if not
+        """Increments the player's vertical velocity if not
         on the ground and the double jump is available.
         """
 
@@ -114,10 +117,25 @@ class Entity(Hitbox):
             self.y_vel = -500
             self.double_jump_debounce = True
 
+    def take_damage(self, dmg: int) -> None:
+        """Handles cases when the player takes damage.
+
+        :param dmg: The amount of damage taken.
+        :type dmg: int
+        """
+
+        if not self.i_frames:
+            self.health -= dmg
+            self.health = 0 if self.health < 0 else self.health
+            self.i_frames = 10
+
+            if self.health == 0:
+                self.stage = "GAME_OVER"
+
     # updates
 
     def check_platform_collisions(self, platforms: Group) -> None:
-        """Run checks on the entity's collisions with other objects.
+        """Run checks on the player's collisions with other objects.
 
         :param platforms: A list of platforms necessary for collision checks.
         :type platforms: Group
@@ -147,7 +165,10 @@ class Entity(Hitbox):
                         self.interp_data.moving = False
                         self.interp_data.target_pos = (self.xcor, self.ycor)
 
-                        self.xcor = platform.coords.left() - self.width
+                        if self.facing_right:
+                            self.xcor = platform.coords.left() - self.width
+                        elif self.facing_left:
+                            self.xcor = platform.coords.right()
 
                     elif (
                         self.coords.left() < platform.coords.right()
@@ -170,15 +191,6 @@ class Entity(Hitbox):
                         self.y_vel = 0
                         self.on_ground = True
 
-                        # set the interp target pos y-coordinate to the player's coordinate
-                        # to prevent the jittery behavior when dashing near a floor/ceiling.
-                        # basically the interp function kept moving the player into the block after
-                        # the collision moves the player out. this fixes that
-                        self.interp_data.target_pos = (
-                            self.interp_data.target_pos[0],
-                            self.ycor,
-                        )
-
                     # bottom of platform collision
                     elif (
                         self.coords.top() < platform.coords.bottom()
@@ -187,17 +199,8 @@ class Entity(Hitbox):
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
-                        # set the interp target pos y-coordinate to the player's coordinate
-                        # to prevent the jittery behavior when dashing near a floor/ceiling.
-                        # basically the interp function kept moving the player into the block after
-                        # the collision moves the player out. this fixes that
-                        self.interp_data.target_pos = (
-                            self.interp_data.target_pos[0],
-                            self.ycor,
-                        )
-
     def check_spike_collisions(self, spikes: Group) -> None:
-        """Checks for collisions between the entity and the given Spikes.
+        """Checks for collisions between the player and the given Spikes.
 
         :param spikes: A Group of Spike objects.
         :type spikes: Group
@@ -208,12 +211,36 @@ class Entity(Hitbox):
         for spike in spikes:
             check_type(spike, Spike)
 
+            if (
+                self.has_collision
+                and spike.has_collision
+                and self.colliderect(spike.hitbox)
+            ):
+                self.y_vel = -500
+                self.take_damage(1)
+
+    def check_lava_collisions(self, lavas: Group) -> None:
+        """Checks for collisions between the player and the given Lavas.
+
+        :param lavas: A Group of Lava objects.
+        :type lavas: Group
+        """
+
+        check_type(lavas, Group)
+
+        for lava in lavas:
+            check_type(lava, Lava)
+
+            if self.has_collision and lava.has_collision and self.colliderect(lava):
+                self.y_vel = -500
+                self.take_damage(5)
+
     def update_(
         self,
         dt: float,
         objects: Tuple[Group, Group | None, Group | None, TextInfo | None],
     ) -> None:
-        """Runs update checks on the entity.
+        """Runs update checks on the player.
 
         :param dt: Delta time.
         :type dt: float
@@ -230,10 +257,16 @@ class Entity(Hitbox):
         # pylint: enable=attribute-defined-outside-init
         self.coords.update(self.xcor, self.ycor)
 
+        self.interp(dt)
+
         self.check_platform_collisions(objects[0])
+        if objects[1]:
+            self.check_spike_collisions(objects[1])
+        if objects[2]:
+            self.check_lava_collisions(objects[2])
 
     def draw(self, screen: pygame.Surface) -> None:
-        """Draws the entity to the screen.
+        """Draws the player to the screen.
 
         :param screen: The screen to draw on.
         :type screen: pygame.Surface
@@ -244,50 +277,3 @@ class Entity(Hitbox):
         pygame.draw.rect(
             screen, self.color, (self.xcor, self.ycor, self.width, self.height)
         )
-
-
-class Player(Entity):
-    """Player class."""
-
-    def take_damage(self, dmg: int) -> None:
-        """Damages the player with the given damage.
-
-        :param dmg: The amount of damage to take.
-        :type dmg: int
-        """
-
-        self.health -= dmg
-        if self.health < 1:
-            self.health = 0
-
-    # it's named update_ to prevent overriding an existing class method of pygame.Rect
-    def update_(
-        self,
-        dt: float,
-        objects: Tuple[Group, Group | None, Group | None, TextInfo | None],
-    ) -> None:
-        """Runs update checks on the player.
-
-        :param dt: Delta time.
-        :type dt: float
-        :param objects: A list of objects necessary for collision checks.
-        :type objects: Tuple[Group, Group | None, Group | None, TextInfo | None]
-        :param screen: The screen to draw on.
-        :type screen: pygame.Surface
-        """
-
-        if self.health == 0:
-            # TODO
-            ...
-
-        self.y_vel += GRAVITY_ACCELERATION * dt
-        self.ycor += self.y_vel * dt
-        self.on_ground = False
-
-        # pylint: disable=attribute-defined-outside-init
-        self.topleft = (int(self.xcor), int(self.ycor))
-        # pylint: disable=attribute-defined-outside-init
-        self.coords.update(self.xcor, self.ycor)
-
-        self.interp(dt)
-        self.check_platform_collisions(objects[0])

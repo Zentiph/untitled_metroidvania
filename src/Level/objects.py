@@ -82,6 +82,12 @@ class Spike(Hitbox):
         """
 
         super().__init__(xcor, ycor, width, height, has_collision, color)
+        self.hitbox: pygame.Rect = pygame.Rect(
+            self.xcor + self.width // 3,
+            self.ycor + self.height // 3,
+            self.width // 3,
+            2 * self.height // 3,
+        )
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draws the spike to the screen.
@@ -107,6 +113,59 @@ class Spike(Hitbox):
         )
 
         pygame.draw.polygon(screen, self.color, (p1, p2, p3))
+
+    def draw_hitbox(self, screen: pygame.Surface) -> None:
+        """Draws the Spike's hitbox to the screen. Used for debugging.
+
+        :param screen: The screen to draw to.
+        :type screen: pygame.Surface
+        """
+
+        pygame.draw.rect(screen, (255, 255, 255), self.hitbox)
+
+
+class Lava(Hitbox):
+    """Class used to create Lava objects."""
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        width: int | float,
+        height: int | float,
+        has_collision: bool = True,
+        color: Tuple[int, int, int] = (255, 0, 0),
+    ) -> None:
+        """Initializer for Lava objects.
+
+        :param x: The x position of the Lava.
+        :type x: int | float
+        :param y: The y position of the Lava.
+        :type y: int | float
+        :param width: The width of the Lava.
+        :type width: int | float
+        :param height: The height of the Lava.
+        :type height: int | float
+        :param has_collision: Whether the Lava has collision.
+        :type has_collision: bool, optional
+        :param color: The color of the Lava.
+        :type color: Tuple[int], optional
+        """
+
+        super().__init__(xcor, ycor, width, height, has_collision, color)
+
+    def draw(self, screen: pygame.Surface) -> None:
+        """Draws the Lava to the screen.
+
+        :param screen: The screen to draw the Lava.
+        :type screen: pygame.Surface
+        """
+
+        check_type(screen, pygame.Surface)
+
+        pygame.draw.rect(
+            screen, self.color, (self.left, self.top, self.width, self.height)
+        )
 
 
 class Group:

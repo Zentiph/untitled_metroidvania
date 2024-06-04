@@ -9,7 +9,7 @@ from typing import Tuple
 import pygame
 from screeninfo import get_monitors
 
-from src import GUI, Entities, Internal, Level, Stages
+from src import GUI, Internal, Level, Player, Stages
 from src.Internal import interp
 
 # get the main monitor info,
@@ -26,9 +26,9 @@ screen: pygame.Surface = pygame.display.set_mode(
 pygame.display.set_caption("Untitled Metroidvania.")
 
 # setup the player to spawn in stage 1
-plr: Entities.Player = Entities.Player(
-    100,
-    770,
+plr: Player.Player = Player.Player(
+    200,
+    730,
     width=50,
     height=80,
     speed=250,
@@ -38,7 +38,7 @@ plr: Entities.Player = Entities.Player(
     color=(255, 0, 0),
 )
 
-healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
+healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 60, plr)
 
 screen_objects: Tuple[
     Level.Group, Level.Group | None, Level.Group | None, Stages.TextInfo | None
@@ -49,6 +49,9 @@ dash_debounce: bool = False
 
 # the stage the player was in last frame
 previous_stage: int | str = plr.stage
+
+# TODO: TEST VAR, REMOVE LATER
+tick_wait: int = 0
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -88,10 +91,29 @@ while True:
         dash_debounce = True
 
     # DEBUG ROOM KEYBIND
-    if keys[pygame.K_LCTRL] and keys[pygame.K_d]:
-        plr.xcor = 100
-        plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 50
+    if keys[pygame.K_LCTRL] and keys[pygame.K_d] and plr.stage != "DEBUG":
+        plr.xcor = 200
+        plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 100
         plr.stage = "DEBUG"
+
+    # exit debug room
+    if keys[pygame.K_LCTRL] and keys[pygame.K_a] and plr.stage == "DEBUG":
+        plr.xcor = 200
+        plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 100
+        plr.stage = 1
+
+    # TODO: TEST KEYBINDS, REMOVE LATER
+    if keys[pygame.K_EQUALS] and not tick_wait:
+        plr.stage = 1 if isinstance(plr.stage, str) else plr.stage
+        plr.stage += 1
+        tick_wait = 10
+
+    if keys[pygame.K_MINUS] and not tick_wait:
+        plr.stage = 1 if isinstance(plr.stage, str) else plr.stage
+        plr.stage -= 1
+        tick_wait = 10
+
+    tick_wait -= 1 if tick_wait > 0 else 0
 
     # exit game
     # maybe we'll add a menu later
@@ -140,7 +162,8 @@ while True:
     # the healthbar is updated last so it is drawn on top of everything
     healthbar.update(screen)
 
-    # update the previous frame stage
+    # update frame by frame data
     previous_stage = plr.stage
+    plr.i_frames -= 1 if plr.i_frames > 0 else 0
 
     pygame.display.flip()

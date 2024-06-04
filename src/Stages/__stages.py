@@ -6,7 +6,7 @@ Module containing all the preset stages for the game.
 from typing import Dict, Tuple, Union
 
 from ..Internal import SCREEN_HEIGHT, SCREEN_WIDTH
-from ..Level import Group, Platform, Spike
+from ..Level import Group, Lava, Platform, Spike
 
 __all__ = ["STAGES", "TextInfo", "DEBUG", "STAGE1"]
 
@@ -19,7 +19,7 @@ class TextInfo:
         msg: str,
         xcor: int | float,
         ycor: int | float,
-        size: int,
+        size: int = 100,
         color: Tuple[int, int, int] = (255, 255, 255),
     ) -> None:
         """Initializer for a TextInfo instance.
@@ -31,7 +31,7 @@ class TextInfo:
         :param ycor: The y-coordinate of the text.
         :type ycor: int | float
         :param size: The size of the text.
-        :type size: int
+        :type size: int, optional
         :param color: The color of the text.
         :type color: Tuple[int, int, int], optional
         """
@@ -43,17 +43,32 @@ class TextInfo:
         self.color = color
 
 
+# SPECIAL STAGES
+
+# TODO
+MENU: Tuple[Group, Group | None, Group | None, TextInfo | None]
+
+# TODO
+GAME_OVER: Tuple[Group, Group | None, Group | None, TextInfo | None]
+
 DEBUG: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
     Group(
-        Platform(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50),
-        Platform(0, 0, SCREEN_WIDTH, 50),
-        Platform(0, 0, 50, SCREEN_HEIGHT),
-        Platform(SCREEN_WIDTH - 50, 0, 50, SCREEN_HEIGHT),
+        Platform(0, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 400, 100),  # floor
+        Platform(0, 0, SCREEN_WIDTH, 100),  # ceiling
+        Platform(0, 0, 100, SCREEN_HEIGHT),  # left wall
+        Platform(SCREEN_WIDTH - 100, 0, 100, SCREEN_HEIGHT),  # right wall
     ),
-    None,
-    None,
-    None,
+    # spikes
+    Group(
+        Spike(600, 750, 50, 50),
+        Spike(650, 750, 50, 50),
+        Spike(700, 750, 50, 50),
+        Spike(750, 750, 50, 50),
+    ),
+    # lava
+    Group(Lava(SCREEN_WIDTH - 400, SCREEN_HEIGHT - 100, 300, 100)),
+    TextInfo("DEBUG ROOM", SCREEN_WIDTH / 2 - 325, 150),
 )
 
 
@@ -70,11 +85,12 @@ DEBUG: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
 STAGE1: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
     Group(
-        Platform(0, 850, 1600, 50),  # floor
-        Platform(0, 0, 1600, 50),  # ceiling
-        Platform(0, 0, 50, 450),  # left wall
-        Platform(0, 800, 50, 100),  # bottom ledge
-        Platform(0, 450, 50, 350, False, (50, 50, 255)),  # walkable wall
+        Platform(0, 800, 1600, 100),  # floor
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 100, 450),  # left wall
+        Platform(1500, 0, 100, 600),  # right wall
+        Platform(0, 700, 100, 100),  # bottom ledge
+        Platform(0, 400, 100, 300, False, (30, 30, 255)),  # walkable wall
     ),
     None,
     None,
@@ -82,45 +98,35 @@ STAGE1: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
         "Walk with A and D or ARROW KEYS",
         SCREEN_WIDTH / 2 - 650,
         SCREEN_HEIGHT / 2 - 200,
-        100,
     ),
 )
 
 STAGE2: Tuple[Group, Group | None, Group | None, TextInfo | None] = (
     # platforms
     Group(
-        Platform(0, 850, 1600, 50),  # floor
-        Platform(0, 0, 1600, 50),  # ceiling
-        Platform(0, 0, 50, 450),  # left wall
-        Platform(0, 800, 50, 100),  # bottom ledge
-        Platform(500, 800, 100, 100),
-        Platform(1000, 800, 100, 100),
+        Platform(0, 800, 1600, 100),  # floor
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 100, 600),  # left wall
+        Platform(500, 700, 100, 150),  # bottom ledge left
+        Platform(1000, 700, 100, 150),  # bottom ledge right
+        Platform(750, 600, 100, 50),  # floating platform
     ),
     # spikes
     Group(
-        Spike(600, 825, 25, 25),
-        Spike(625, 825, 25, 25),
-        Spike(650, 825, 25, 25),
-        Spike(675, 825, 25, 25),
-        Spike(700, 825, 25, 25),
-        Spike(725, 825, 25, 25),
-        Spike(750, 825, 25, 25),
-        Spike(775, 825, 25, 25),
-        Spike(800, 825, 25, 25),
-        Spike(825, 825, 25, 25),
-        Spike(850, 825, 25, 25),
-        Spike(875, 825, 25, 25),
-        Spike(900, 825, 25, 25),
-        Spike(925, 825, 25, 25),
-        Spike(950, 825, 25, 25),
-        Spike(975, 825, 25, 25),
+        Spike(600, 750, 50, 50),
+        Spike(650, 750, 50, 50),
+        Spike(700, 750, 50, 50),
+        Spike(750, 750, 50, 50),
+        Spike(800, 750, 50, 50),
+        Spike(850, 750, 50, 50),
+        Spike(900, 750, 50, 50),
+        Spike(950, 750, 50, 50),
     ),
     None,
     TextInfo(
         "Jump with W, SPACE, or UP ARROW",
         SCREEN_WIDTH / 2 - 650,
         SCREEN_HEIGHT / 2 - 200,
-        100,
     ),
 )
 
