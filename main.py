@@ -11,6 +11,7 @@ import pygame
 from screeninfo import get_monitors
 from src import Entities, GUI, Internal, Level
 from src.Internal import interp
+from random import randint
 
 
 # get the main monitor info,
@@ -40,10 +41,14 @@ plr: Entities.Player = Entities.Player(
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 30, plr)
 
 level_2_platforms: List[Level.Surface] = [
-    Level.Surface(0,850,1600,50, True),
+    Level.Surface(50,850,450,50, True),
     Level.Surface(0,0,50,1600, True),
     Level.Surface(1550,0,50,1600, True),
     Level.Surface(0,0,1600,50, True),
+    Level.Surface(750,700, 100, 200, True),
+    Level.Surface(400, 850, 350, 50, True, (255,128,0)),
+    Level.Surface(850, 850, 350, 50, True, (255,128,0)),
+    Level.Surface(1200,850,450,50, True),
 ]
 
 jump_flag: bool = False
