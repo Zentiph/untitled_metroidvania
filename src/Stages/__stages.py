@@ -3,6 +3,10 @@
 Module containing all the preset stages for the game.
 """
 
+# this whole module kinda sucks and isn't ideal,
+# but it's the most elegant way I could think of
+# doing this with 3 days left.
+
 from typing import Dict, Tuple, Union
 
 from ..Internal import SCREEN_HEIGHT, SCREEN_WIDTH
@@ -45,32 +49,6 @@ class TextInfo:
         self.ycor = ycor
         self.size = size
         self.color = color
-
-
-def grid_to_stage(grid_location: Tuple[int, int]) -> int | str:
-    """Returns the corresponding stage number for the grid location.
-
-    :param grid_location: The location of the player on the grid.
-    :type grid_location: Tuple[int, int]
-    :return: The corresponding stage number.
-    :rtype: int | str
-    """
-
-    match grid_location:
-        # special stages
-        case (-1, -1):
-            return "DEBUG"
-        case (1, 0):
-            return "GAME_OVER"
-
-        # regular stages
-        case (1, 1):
-            return 1
-        case (2, 1):
-            return 2
-
-    # raise an error if the stage is not found
-    raise StageNotFoundError
 
 
 # SPECIAL STAGES
@@ -151,7 +129,8 @@ STAGE1: Tuple[
         Platform(-50, 0, 150, 450),  # left wall
         Platform(1500, 0, 150, 600),  # right wall
         Platform(0, 700, 100, 100),  # bottom ledge
-        Platform(0, 400, 100, 300, False, (30, 30, 255)),  # walkable wall
+        Platform(0, 400, 100, 300),  # not walkable wall
+        # Platform(0, 400, 100, 300, False, (30, 30, 255)),  # walkable wall
     ),
     None,
     None,
@@ -200,6 +179,156 @@ STAGE2: Tuple[
     ),
 )
 
+STAGE3: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (3, 1),
+    # platforms
+    Group(
+        Platform(0, 800, 450, 100),  # floor left side
+        Platform(1100, 800, 500, 100),  # floor right side
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 150, 600),  # left wall
+        Platform(1500, 0, 150, 600),  # right wall
+        Platform(700, 600, 150, 300),  # center wall
+        Platform(0, 850, 1600, 50),  # long floor
+    ),
+    Group(
+        # left spike pit
+        Spike(450, 800, 50, 50),
+        Spike(500, 800, 50, 50),
+        Spike(550, 800, 50, 50),
+        Spike(600, 800, 50, 50),
+        Spike(650, 800, 50, 50),
+        # right spike pit
+        Spike(850, 800, 50, 50),
+        Spike(900, 800, 50, 50),
+        Spike(950, 800, 50, 50),
+        Spike(1000, 800, 50, 50),
+        Spike(1050, 800, 50, 50),
+    ),
+    None,
+    (
+        TextInfo(
+            "Double-jump by pressing", SCREEN_WIDTH / 2 - 455, SCREEN_HEIGHT / 2 - 300
+        ),
+        TextInfo(
+            "W, SPACE, or UP ARROW", SCREEN_WIDTH / 2 - 460, SCREEN_HEIGHT / 2 - 200
+        ),
+        TextInfo(
+            "again when in midair",
+            SCREEN_WIDTH / 2 - 400,
+            SCREEN_HEIGHT / 2 - 100,
+        ),
+    ),
+)
+
+STAGE4: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (4, 1),
+    # platforms
+    Group(
+        Platform(0, 800, 300, 100),  # floor left side
+        Platform(1300, 800, 300, 100),  # floor right side
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 150, 600),  # left wall
+        Platform(1500, 0, 150, 600),  # right wall
+        Platform(700, 750, 200, 100),  # center wall
+        Platform(0, 850, 1600, 50),  # long floor
+    ),
+    Group(
+        # left spike pit
+        Spike(300, 800, 50, 50),
+        Spike(350, 800, 50, 50),
+        Spike(400, 800, 50, 50),
+        Spike(450, 800, 50, 50),
+        Spike(500, 800, 50, 50),
+        Spike(550, 800, 50, 50),
+        Spike(600, 800, 50, 50),
+        Spike(650, 800, 50, 50),
+        # right spike pit
+        Spike(900, 800, 50, 50),
+        Spike(950, 800, 50, 50),
+        Spike(1000, 800, 50, 50),
+        Spike(1050, 800, 50, 50),
+        Spike(1100, 800, 50, 50),
+        Spike(1150, 800, 50, 50),
+        Spike(1200, 800, 50, 50),
+        Spike(1250, 800, 50, 50),
+    ),
+    None,
+    (
+        TextInfo(
+            "Your double-jump has a small",
+            SCREEN_WIDTH / 2 - 540,
+            SCREEN_HEIGHT / 2 - 300,
+        ),
+        TextInfo(
+            "cooldown before activating,",
+            SCREEN_WIDTH / 2 - 520,
+            SCREEN_HEIGHT / 2 - 200,
+        ),
+        TextInfo(
+            "so be careful",
+            SCREEN_WIDTH / 2 - 280,
+            SCREEN_HEIGHT / 2 - 100,
+        ),
+    ),
+)
+
+STAGE5: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (5, 1),
+    # platforms
+    Group(
+        Platform(0, 800, 550, 100),  # floor left side
+        Platform(1300, 800, 300, 100),  # floor right side
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 150, 600),  # left wall
+        Platform(1500, 0, 150, 600),  # right wall
+        Platform(0, 500, 500, 100),  # left platform
+        Platform(700, 700, 150, 200),  # middle platform
+        Platform(500, 250, 500, 100),  # upper platform
+        Platform(100, 350, 150, 175),  # left upper platform
+        Platform(0, 850, 1600, 50),  # long floor
+        Platform(1000, 250, 150, 1350),
+    ),
+    Group(
+        # left spike pit
+        Spike(550, 800, 50, 50),
+        Spike(600, 800, 50, 50),
+        Spike(650, 800, 50, 50),
+        # right spike pit
+        Spike(850, 800, 50, 50),
+        Spike(900, 800, 50, 50),
+        Spike(950, 800, 50, 50),
+        # upper left spikes
+        Spike(250, 450, 50, 50),
+        Spike(300, 450, 50, 50),
+        Spike(1150, 800, 50, 50),
+        Spike(1200, 800, 50, 50),
+        Spike(1250, 800, 50, 50),
+    ),
+    None,
+    None,
+)
+
+STAGE6: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # TODO: sam's level
+    (6, 1),
+    Group(),
+    None,
+    None,
+    None,
+)
+
 STAGES: Dict[
     Union[int, str],
     Tuple[
@@ -212,4 +341,25 @@ STAGES: Dict[
     # regular stages
     1: STAGE1,
     2: STAGE2,
+    3: STAGE3,
+    4: STAGE4,
+    5: STAGE5,
+    6: STAGE6,
 }
+
+
+def grid_to_stage(grid_location: Tuple[int, int]) -> int | str:
+    """Returns the corresponding stage number for the grid location.
+
+    :param grid_location: The location of the player on the grid.
+    :type grid_location: Tuple[int, int]
+    :return: The corresponding stage number.
+    :rtype: int | str
+    """
+
+    for name, stage in STAGES.items():
+        if stage[0] == grid_location:
+            return name
+
+    # raise an error if the stage is not found
+    raise StageNotFoundError

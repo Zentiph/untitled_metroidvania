@@ -57,6 +57,9 @@ dash_debounce: bool = False
 # the stage the player was in last frame
 previous_stage: int | str = plr.stage
 
+# TODO TEST STUFF, REMOVE LATER
+plr.grid_xcor, plr.grid_ycor = 5, 1
+
 # anything inside while True is the gameloop
 # this code executes each frame
 while True:
@@ -88,11 +91,9 @@ while True:
     # dashing
     if keys[pygame.K_LSHIFT] and not dash_debounce:
         if plr.facing_right:
-            plr.moveto(plr.xcor + 150, plr.ycor, 0.2,
-                       interp.ease_out_circ, False)
+            plr.moveto(plr.xcor + 150, plr.ycor, 0.2, interp.ease_out_circ, False)
         if plr.facing_left:
-            plr.moveto(plr.xcor - 150, plr.ycor, 0.2,
-                       interp.ease_out_circ, False)
+            plr.moveto(plr.xcor - 150, plr.ycor, 0.2, interp.ease_out_circ, False)
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
 
@@ -149,7 +150,7 @@ while True:
                 (text.xcor + 50, text.ycor),
             )
 
-    if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
+    if jump_debounce and pygame.time.get_ticks() - start_time_j >= 200:
         jump_debounce = False
 
     if (
