@@ -6,19 +6,13 @@ all times outside of menus.
 """
 
 import pygame
-from ..Entities import Player
+from ..Player import Player
 
 
 class HealthBar:
-    """Class for displaying the player healthbar.
-    """
+    """Class for displaying the player healthbar."""
 
-    def __init__(
-        self,
-        xcor: int | float,
-        ycor: int | float,
-        plr: Player
-    ) -> None:
+    def __init__(self, xcor: int | float, ycor: int | float, plr: Player) -> None:
         """Initializer for the HealthBar object.
 
         :param xcor: The x-coordinate of the HealthBar object.
@@ -33,10 +27,7 @@ class HealthBar:
         self.ycor: int | float = ycor
         self.plr: Player = plr
 
-    def update(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def update(self, screen: pygame.Surface) -> None:
         """Runs update checks on the HealthBar.
 
         :param screen: _description_
@@ -44,24 +35,18 @@ class HealthBar:
         """
 
         pygame.draw.rect(
-            screen,
-            (255, 0, 0),
-            pygame.Rect(self.xcor, self.ycor, 200, 30)
+            screen, (255, 0, 0), pygame.Rect(self.xcor, self.ycor, 300, 60)
         )
         pygame.draw.rect(
             screen,
             (0, 255, 0),
             pygame.Rect(
-                self.xcor,
-                self.ycor,
-                200 * (self.plr.health / self.plr.max_health),
-                30
-            )
+                self.xcor, self.ycor, 300 * (self.plr.health / self.plr.max_health), 60
+            ),
         )
         screen.blit(
-            pygame.font.SysFont("Comic Sans MS", 30).render(
-                f"{round(self.plr.health)} / {self.plr.max_health}",
-                False,
-                (0, 0, 0)),
-            (self.xcor + 50, self.ycor - 6)
+            pygame.font.SysFont("8514oem", 75).render(
+                f"{round(self.plr.health)} / {self.plr.max_health}", False, (0, 0, 0)
+            ),
+            (self.xcor + 60, self.ycor + 10),
         )

@@ -3,7 +3,7 @@
 Module containing surface functionality.
 """
 
-from typing import Dict, Tuple, Union
+from typing import Any, Dict, Iterator, Tuple, Union
 
 import pygame
 
@@ -11,8 +11,7 @@ from ..Internal import check_type, Hitbox
 
 
 class Platform(Hitbox):
-    """Class used to create platform objects.
-    """
+    """Class used to create platform objects."""
 
     def __init__(
         self,
@@ -21,7 +20,7 @@ class Platform(Hitbox):
         width: int | float,
         height: int | float,
         has_collision: bool = True,
-        color: Tuple[int, int, int] = (0, 0, 255)
+        color: Tuple[int, int, int] = (0, 0, 255),
     ) -> None:
         """Initializer for Platform objects.
 
@@ -41,10 +40,7 @@ class Platform(Hitbox):
 
         super().__init__(xcor, ycor, width, height, has_collision, color)
 
-    def draw(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws the platform to the screen.
 
         :param screen: The screen to draw the platform.
@@ -53,15 +49,12 @@ class Platform(Hitbox):
 
         check_type(screen, pygame.Surface)
         pygame.draw.rect(
-            screen,
-            self.color,
-            (self.left, self.top, self.width, self.height)
+            screen, self.color, (self.left, self.top, self.width, self.height)
         )
 
 
 class Spike(Hitbox):
-    """Class used to create Spike objects.
-    """
+    """Class used to create Spike objects."""
 
     def __init__(
         self,
@@ -69,7 +62,8 @@ class Spike(Hitbox):
         ycor: int | float,
         width: int | float,
         height: int | float,
-        color: Tuple[int, int, int] = (255, 128, 0)
+        has_collision: bool = True,
+        color: Tuple[int, int, int] = (255, 128, 0),
     ) -> None:
         """Initializer for Spike objects.
 
@@ -81,16 +75,21 @@ class Spike(Hitbox):
         :type width: int | float
         :param height: The height of the spike.
         :type height: int | float
+        :param has_collision: Whether the spike has collision.
+        :type has_collision: bool, optional
         :param color: The color of the spike.
         :type color: Tuple[int], optional
         """
 
-        super().__init__(xcor, ycor, width, height, color)
+        super().__init__(xcor, ycor, width, height, has_collision, color)
+        self.hitbox: pygame.Rect = pygame.Rect(
+            self.xcor + self.width // 3,
+            self.ycor + self.height // 3,
+            self.width // 3,
+            2 * self.height // 3,
+        )
 
-    def draw(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws the spike to the screen.
 
         :param screen: The screen to draw the spike.
@@ -98,45 +97,102 @@ class Spike(Hitbox):
         """
 
         check_type(screen, pygame.Surface)
-        # TODO
-        pygame.draw.polygon(
-            screen,
-            self.color,
-            (self.coords.bottom_left(),
-             (self.coords.center_x, self.coords.top()),
-             self.coords.bottom_right())
+
+        # calculate the points of the spike
+        p1: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor,
+            self.ycor + self.height,
+        )
+        p2: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor + self.width / 2,
+            self.ycor,
+        )
+        p3: Tuple[Union[int, float], Union[int, float]] = (
+            self.xcor + self.width,
+            self.ycor + self.height,
+        )
+
+        pygame.draw.polygon(screen, self.color, (p1, p2, p3))
+
+    def draw_hitbox(self, screen: pygame.Surface) -> None:
+        """Draws the Spike's hitbox to the screen. Used for debugging.
+
+        :param screen: The screen to draw to.
+        :type screen: pygame.Surface
+        """
+
+        pygame.draw.rect(screen, (255, 255, 255), self.hitbox)
+
+
+class Lava(Hitbox):
+    """Class used to create Lava objects."""
+
+    def __init__(
+        self,
+        xcor: int | float,
+        ycor: int | float,
+        width: int | float,
+        height: int | float,
+        has_collision: bool = True,
+        color: Tuple[int, int, int] = (255, 0, 0),
+    ) -> None:
+        """Initializer for Lava objects.
+
+        :param x: The x position of the Lava.
+        :type x: int | float
+        :param y: The y position of the Lava.
+        :type y: int | float
+        :param width: The width of the Lava.
+        :type width: int | float
+        :param height: The height of the Lava.
+        :type height: int | float
+        :param has_collision: Whether the Lava has collision.
+        :type has_collision: bool, optional
+        :param color: The color of the Lava.
+        :type color: Tuple[int], optional
+        """
+
+        super().__init__(xcor, ycor, width, height, has_collision, color)
+
+    def draw(self, screen: pygame.Surface) -> None:
+        """Draws the Lava to the screen.
+
+        :param screen: The screen to draw the Lava.
+        :type screen: pygame.Surface
+        """
+
+        check_type(screen, pygame.Surface)
+
+        pygame.draw.rect(
+            screen, self.color, (self.left, self.top, self.width, self.height)
         )
 
 
 class Group:
-    """Groups together multiple Level objects.
-    """
+    """Groups together multiple Level objects."""
 
-    def __init__(
-        self,
-        *objects: any
-    ) -> None:
+    def __init__(self, *objects: Any) -> None:
         """Initializes the Group with the given objects.
 
         :param objects: The objects to group.
+        :type objects: Any
         """
 
-        self.objects: Dict[str, any] = {}
+        self.objects: Dict[str, Any] = {}
         self._name_count: Dict[str, int] = {}
 
         for obj in objects:
             self._add_objects(obj)
 
-    def __getattr__(
-        self,
-        name: str
-    ) -> any:
+        self.index = 0
+
+    def __getattr__(self, name: str) -> Any:
         """Grants access to grouped objects by their class name.
 
         :param name: The name of the object to access.
         :type name: str
         :return: The object associated with the given name.
-        :rtype: any
+        :rtype: Any
         """
 
         try:
@@ -155,23 +211,20 @@ class Group:
 
         return len(self.objects)
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator:
         """Allows iteration over the group objects.
 
         :return: An iterator over the objects in the group.
-        :rtype: iter
+        :rtype: Iterator
         """
 
         return iter(self.objects.values())
 
-    def __contains__(
-        self,
-        item: Union[str, any]
-    ) -> bool:
+    def __contains__(self, item: Union[str, Any]) -> bool:
         """Checks if an object or name is in the group.
 
         :param item: The object or name to check.
-        :type item: Union[str, any]
+        :type item: Union[str, Any]
         :return: True if the object or name is in the group, False otherwise.
         :rtype: bool
         """
@@ -180,10 +233,7 @@ class Group:
             return item in self.objects
         return item in self.objects.values()
 
-    def _add_objects(
-        self,
-        *objects: any
-    ) -> None:
+    def _add_objects(self, *objects: Any) -> None:
         """Internal method that adds the objects to the Group.
 
         :param objects: The objects to add.
@@ -200,56 +250,22 @@ class Group:
 
             self.objects[unique_name] = obj
 
-    def add(
-        self,
-        *objects: any
-    ) -> None:
+    def add(self, *objects: Any) -> None:
         """Adds the objects to the Group.
 
         :param objects: The objects to add.
+        :type objects: Any
         """
 
         self._add_objects(*objects)
 
-    def _remove_objects(
-        self,
-        *objects: object
-    ) -> None:
-        """Internal method that removes the objects from the Group.
-
-        :param objects: The objects to remove.
-        """
-
-        for obj in objects:
-            if obj in self.objects:
-                del self.objects[obj]
-            else:
-                raise AttributeError(
-                    f"'Group' has no object with the name '{obj}'."
-                )
-
-    def remove(
-        self,
-        *objects: object
-    ) -> None:
-        """Removes the objects from the Group.
-
-        :param objects: The objects to remove.
-        """
-
-        self._remove_objects(*objects)
-
     def clear(self) -> None:
-        """Removes all objects from the group.
-        """
+        """Removes all objects from the group."""
 
         self.objects.clear()
         self._name_count.clear()
 
-    def update(
-        self,
-        **kwargs
-    ) -> None:
+    def update(self, **kwargs) -> None:
         """Updates properties of all objects in the group.
 
         :param kwargs: The properties to update and their new values.
@@ -260,10 +276,7 @@ class Group:
                 if hasattr(obj, k):
                     setattr(obj, k, v)
 
-    def draw(
-        self,
-        screen: pygame.Surface
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draws all drawable objects in the group to the screen.
 
         :param screen: The screen to draw the objects on.

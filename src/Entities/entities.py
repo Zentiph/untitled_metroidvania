@@ -264,3 +264,4 @@ class Player(Entity):
 
         self.interp(dt)
         self.check_platform_collisions(platforms)
+
