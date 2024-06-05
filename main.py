@@ -89,9 +89,9 @@ while True:
     # dashing
     if keys[pygame.K_LSHIFT] and not dash_debounce:
         if plr.facing_right:
-            plr.moveto(plr.xcor + 250, plr.ycor, 0.2, interp.ease_out_circ, False)
+            plr.moveto(plr.xcor + 150, plr.ycor, 0.2, interp.ease_out_circ, False)
         if plr.facing_left:
-            plr.moveto(plr.xcor - 250, plr.ycor, 0.2, interp.ease_out_circ, False)
+            plr.moveto(plr.xcor - 150, plr.ycor, 0.2, interp.ease_out_circ, False)
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
 

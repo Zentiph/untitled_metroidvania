@@ -174,9 +174,10 @@ STAGE2: Tuple[
         Platform(0, 800, 1600, 100),  # floor
         Platform(0, 0, 1600, 100),  # ceiling
         Platform(0, 0, 100, 600),  # left wall
+        Platform(1500, 0, 100, 600),  # right wall
         Platform(450, 700, 150, 150),  # bottom ledge left
         Platform(1000, 700, 150, 150),  # bottom ledge right
-        Platform(700, 600, 150, 50),  # floating platform
+        Platform(725, 600, 150, 50),  # floating platform
     ),
     # spikes
     Group(
