@@ -59,7 +59,7 @@ def grid_to_stage(grid_location: Tuple[int, int]) -> int | str:
     match grid_location:
         # special stages
         case (-1, -1):
-            return "DEBUG"
+            return 3
         case (1, 0):
             return "GAME_OVER"
 
@@ -68,6 +68,8 @@ def grid_to_stage(grid_location: Tuple[int, int]) -> int | str:
             return 1
         case (2, 1):
             return 2
+        case (3, 1):
+            return 3
 
     # raise an error if the stage is not found
     raise StageNotFoundError
@@ -200,6 +202,32 @@ STAGE2: Tuple[
     ),
 )
 
+STAGE3: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (3, 1),
+    # platforms
+    Group(
+        Platform(0, 800, 500, 100),  # floor left side
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(0, 0, 150, 600),  # left wall
+        Platform(1500, 0, 150, 600),  # right wall
+        Platform(700, 700, 150, 450)
+        
+        
+    ),
+    None,
+    None,
+    (
+        TextInfo(
+            "Walk with A and D or ARROW KEYS",
+            SCREEN_WIDTH / 2 - 650,
+            SCREEN_HEIGHT / 2 - 200,
+        ),
+    ),
+)
+
 STAGES: Dict[
     Union[int, str],
     Tuple[
@@ -212,4 +240,5 @@ STAGES: Dict[
     # regular stages
     1: STAGE1,
     2: STAGE2,
+    3: STAGE3,
 }
