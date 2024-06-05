@@ -119,47 +119,55 @@ class Coordinates:
 
         return (2 * self.xcor + self.width) / 2, (2 * self.ycor + self.height) / 2
 
-    def is_off_screen_right(self) -> bool:
-        """Checks if the entity is off-screen to the right.
+    def is_off_screen_right(self, dist: int = 0) -> bool:
+        """Checks if the entity is off-screen to the right by the specified distance.
 
+        :param dist: The distance from the edge of the screen.
+        :type dist: int
         :return: Whether the entity is off-screen to the right.
         :rtype: bool
         """
 
-        if self.xcor + self.width > SCREEN_WIDTH:
+        if self.xcor + self.width > SCREEN_WIDTH + dist:
             return True
         return False
 
-    def is_off_screen_left(self) -> bool:
-        """Checks if the entity is off-screen to the left.
+    def is_off_screen_left(self, dist: int = 0) -> bool:
+        """Checks if the entity is off-screen to the left by the specified distance.
 
+        :param dist: The distance from the edge of the screen.
+        :type dist: int
         :return: Whether the entity is off-screen to the left.
         :rtype: bool
         """
 
-        if self.xcor < 0:
+        if self.xcor < 0 - dist:
             return True
         return False
 
-    def is_off_screen_up(self) -> bool:
-        """Checks if the entity is off-screen above.
+    def is_off_screen_up(self, dist: int = 0) -> bool:
+        """Checks if the entity is off-screen above by the specified distance.
 
+        :param dist: The distance from the edge of the screen.
+        :type dist: int
         :return: Whether the entity is off-screen above.
         :rtype: bool
         """
 
-        if self.ycor < 0:
+        if self.ycor < 0 - dist:
             return True
         return False
 
-    def is_off_screen_down(self) -> bool:
-        """Checks if the entity is off-screen below.
+    def is_off_screen_down(self, dist: int = 0) -> bool:
+        """Checks if the entity is off-screen below by the specified distance.
 
+        :param dist: The distance from the edge of the screen.
+        :type dist: int
         :return: Whether the entity is off-screen below.
         :rtype: bool
         """
 
-        if self.ycor + self.height > SCREEN_HEIGHT:
+        if self.ycor + self.height > SCREEN_HEIGHT + dist:
             return True
         return False
 
@@ -210,8 +218,10 @@ class InterpolationData:
             check_type(v, int, float)
         check_type(duration, int, float)
 
-        self.initial_pos: Tuple[Union[int, float], Union[int, float]] = initial_pos
-        self.target_pos: Tuple[Union[int, float], Union[int, float]] = target_pos
+        self.initial_pos: Tuple[Union[int, float],
+                                Union[int, float]] = initial_pos
+        self.target_pos: Tuple[Union[int, float],
+                               Union[int, float]] = target_pos
         self.duration: int | float = duration
 
         self.easing_type: EasingFunction = easing_type
@@ -260,7 +270,8 @@ class Hitbox(pygame.Rect):
             if v < 0 or v > 255:
                 raise ValueError(f"Color value {v} is out of range.")
         if len(color) != 3:
-            raise ValueError(f"Color tuple must be of length 3, not {len(color)}.")
+            raise ValueError(
+                f"Color tuple must be of length 3, not {len(color)}.")
 
         super().__init__(xcor, ycor, width, height)
 

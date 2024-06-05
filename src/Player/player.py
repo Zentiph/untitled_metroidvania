@@ -281,25 +281,25 @@ class Player(Hitbox):
         self.check_lava_collisions(objects[3])
 
         # room transitions
-        if self.coords.is_off_screen_right():
+        if self.coords.is_off_screen_right(self.width):
             # disable interp to prevent bugs
             self.interp_data.moving = False
 
             self.xcor = 0
             self.grid_xcor += 1
-        elif self.coords.is_off_screen_left():
+        elif self.coords.is_off_screen_left(self.width):
             # disable interp to prevent bugs
             self.interp_data.moving = False
 
             self.xcor = 1600 - self.width
             self.grid_xcor -= 1
-        elif self.coords.is_off_screen_up():
+        elif self.coords.is_off_screen_up(self.width):
             # disable interp to prevent bugs
             self.interp_data.moving = False
 
             self.ycor = 800 - self.height
             self.grid_ycor -= 1
-        elif self.coords.is_off_screen_down():
+        elif self.coords.is_off_screen_down(self.width):
             # disable interp to prevent bugs
             self.interp_data.moving = False
 

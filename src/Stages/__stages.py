@@ -89,8 +89,8 @@ GAME_OVER: Tuple[
     Group(
         Platform(0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100),  # floor
         Platform(0, 0, SCREEN_WIDTH, 100),  # ceiling
-        Platform(0, 0, 100, SCREEN_HEIGHT),  # left wall
-        Platform(SCREEN_WIDTH - 100, 0, 100, SCREEN_HEIGHT),  # right wall
+        Platform(-50, 0, 150, SCREEN_HEIGHT),  # left wall
+        Platform(SCREEN_WIDTH - 100, 0, 150, SCREEN_HEIGHT),  # right wall
     ),
     # spikes
     None,
@@ -112,8 +112,8 @@ DEBUG: Tuple[
     Group(
         Platform(0, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 400, 100),  # floor
         Platform(0, 0, SCREEN_WIDTH, 100),  # ceiling
-        Platform(0, 0, 100, SCREEN_HEIGHT),  # left wall
-        Platform(SCREEN_WIDTH - 100, 0, 100, SCREEN_HEIGHT),  # right wall
+        Platform(-50, 0, 150, SCREEN_HEIGHT),  # left wall
+        Platform(SCREEN_WIDTH - 100, 0, 150, SCREEN_HEIGHT),  # right wall
     ),
     # spikes
     Group(
@@ -131,7 +131,7 @@ DEBUG: Tuple[
 # STAGE FORMAT
 #
 # grid coordinate tuple
-# platforms in a group
+# platforms in a group (MAKE SURE WALLS ARE AT LEAST 150 WIDE TO PREVENT DASH-THROUGH)
 # then spikes
 # then lava
 # then text
@@ -148,8 +148,8 @@ STAGE1: Tuple[
     Group(
         Platform(0, 800, 1600, 100),  # floor
         Platform(0, 0, 1600, 100),  # ceiling
-        Platform(0, 0, 100, 450),  # left wall
-        Platform(1500, 0, 100, 600),  # right wall
+        Platform(-50, 0, 150, 450),  # left wall
+        Platform(1500, 0, 150, 600),  # right wall
         Platform(0, 700, 100, 100),  # bottom ledge
         Platform(0, 400, 100, 300, False, (30, 30, 255)),  # walkable wall
     ),

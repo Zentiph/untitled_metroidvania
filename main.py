@@ -35,7 +35,7 @@ plr: Player.Player = Player.Player(
     health=10,
     max_health=10,
     has_collision=True,
-    color=(255, 0, 0),
+    color=(255, 0, 255),
 )
 
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 60, plr)
@@ -56,7 +56,6 @@ dash_debounce: bool = False
 
 # the stage the player was in last frame
 previous_stage: int | str = plr.stage
-
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -89,9 +88,11 @@ while True:
     # dashing
     if keys[pygame.K_LSHIFT] and not dash_debounce:
         if plr.facing_right:
-            plr.moveto(plr.xcor + 150, plr.ycor, 0.2, interp.ease_out_circ, False)
+            plr.moveto(plr.xcor + 150, plr.ycor, 0.2,
+                       interp.ease_out_circ, False)
         if plr.facing_left:
-            plr.moveto(plr.xcor - 150, plr.ycor, 0.2, interp.ease_out_circ, False)
+            plr.moveto(plr.xcor - 150, plr.ycor, 0.2,
+                       interp.ease_out_circ, False)
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
 
