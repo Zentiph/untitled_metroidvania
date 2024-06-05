@@ -209,23 +209,31 @@ STAGE3: Tuple[
     (3, 1),
     # platforms
     Group(
-        Platform(0, 800, 500, 100),  # floor left side
+        Platform(0, 800, 450, 100),  # floor left side
+        Platform(1100, 800, 500, 100), #floor right side
         Platform(0, 0, 1600, 100),  # ceiling
         Platform(0, 0, 150, 600),  # left wall
         Platform(1500, 0, 150, 600),  # right wall
-        Platform(700, 700, 150, 450)
+        Platform(700, 600, 150, 300), #center wall
+        Platform(0, 850, 1600, 50)
         
         
     ),
-    None,
-    None,
-    (
-        TextInfo(
-            "Walk with A and D or ARROW KEYS",
-            SCREEN_WIDTH / 2 - 650,
-            SCREEN_HEIGHT / 2 - 200,
-        ),
+    Group(
+        Spike(450, 800, 50, 50),
+        Spike(500, 800, 50, 50),
+        Spike(550, 800, 50, 50),
+        Spike(600, 800, 50, 50),
+        Spike(650, 800, 50, 50),
+        Spike(850, 800, 50, 50),
+        Spike(900, 800, 50, 50),
+        Spike(950, 800, 50, 50),
+        Spike(1000, 800, 50, 50),
+        Spike(1050, 800, 50, 50)
+        
     ),
+    None,
+    None
 )
 
 STAGES: Dict[
