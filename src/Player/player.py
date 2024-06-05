@@ -9,7 +9,7 @@ import pygame
 
 from ..Internal import GRAVITY_ACCELERATION, Hitbox, check_type
 from ..Level import Group, Lava, Platform, Spike
-from ..Stages import TextInfo
+from ..Stages import grid_to_stage, TextInfo
 
 
 # pylint: disable=too-many-instance-attributes
@@ -67,6 +67,8 @@ class Player(Hitbox):
         self.facing_left: bool = False
         self.facing_right: bool = True
 
+        self.grid_xcor: int = 1
+        self.grid_ycor: int = 1
         self.stage: int | str = 1
 
         # i-frames used when taking damage
@@ -130,7 +132,9 @@ class Player(Hitbox):
             self.i_frames = 10
 
             if self.health == 0:
-                self.stage = "GAME_OVER"
+                self.xcor = 800 - self.width / 2
+                self.ycor = 540 - self.height
+                self.grid_xcor, self.grid_ycor = (1, 0)
 
     # updates
 
@@ -199,12 +203,15 @@ class Player(Hitbox):
                         self.ycor = platform.coords.bottom()
                         self.y_vel = 0
 
-    def check_spike_collisions(self, spikes: Group) -> None:
+    def check_spike_collisions(self, spikes: Group | None) -> None:
         """Checks for collisions between the player and the given Spikes.
 
         :param spikes: A Group of Spike objects.
         :type spikes: Group
         """
+
+        if spikes is None:
+            return
 
         check_type(spikes, Group)
 
@@ -219,12 +226,15 @@ class Player(Hitbox):
                 self.y_vel = -500
                 self.take_damage(1)
 
-    def check_lava_collisions(self, lavas: Group) -> None:
+    def check_lava_collisions(self, lavas: Group | None) -> None:
         """Checks for collisions between the player and the given Lavas.
 
         :param lavas: A Group of Lava objects.
         :type lavas: Group
         """
+
+        if lavas is None:
+            return
 
         check_type(lavas, Group)
 
@@ -238,7 +248,13 @@ class Player(Hitbox):
     def update_(
         self,
         dt: float,
-        objects: Tuple[Group, Group | None, Group | None, TextInfo | None],
+        objects: Tuple[
+            Tuple[int, int],
+            Group,
+            Group | None,
+            Group | None,
+            Tuple[TextInfo, ...] | None,
+        ],
     ) -> None:
         """Runs update checks on the player.
 
@@ -259,11 +275,38 @@ class Player(Hitbox):
 
         self.interp(dt)
 
-        self.check_platform_collisions(objects[0])
-        if objects[1]:
-            self.check_spike_collisions(objects[1])
-        if objects[2]:
-            self.check_lava_collisions(objects[2])
+        # collision detection
+        self.check_platform_collisions(objects[1])
+        self.check_spike_collisions(objects[2])
+        self.check_lava_collisions(objects[3])
+
+        # room transitions
+        if self.coords.is_off_screen_right():
+            # disable interp to prevent bugs
+            self.interp_data.moving = False
+
+            self.xcor = 0
+            self.grid_xcor += 1
+        elif self.coords.is_off_screen_left():
+            # disable interp to prevent bugs
+            self.interp_data.moving = False
+
+            self.xcor = 1600 - self.width
+            self.grid_xcor -= 1
+        elif self.coords.is_off_screen_up():
+            # disable interp to prevent bugs
+            self.interp_data.moving = False
+
+            self.ycor = 800 - self.height
+            self.grid_ycor -= 1
+        elif self.coords.is_off_screen_down():
+            # disable interp to prevent bugs
+            self.interp_data.moving = False
+
+            self.ycor = 0
+            self.grid_ycor += 1
+
+        self.stage = grid_to_stage((self.grid_xcor, self.grid_ycor))
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draws the player to the screen.

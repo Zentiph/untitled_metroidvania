@@ -41,7 +41,14 @@ plr: Player.Player = Player.Player(
 healthbar: GUI.HealthBar = GUI.HealthBar(0, Internal.SCREEN_HEIGHT - 60, plr)
 
 screen_objects: Tuple[
-    Level.Group, Level.Group | None, Level.Group | None, Stages.TextInfo | None
+    Tuple[
+        int,
+        int,
+    ],
+    Level.Group,
+    Level.Group | None,
+    Level.Group | None,
+    Tuple[Stages.TextInfo, ...] | None,
 ] = Stages.STAGES[1]
 
 jump_debounce: bool = False
@@ -50,8 +57,6 @@ dash_debounce: bool = False
 # the stage the player was in last frame
 previous_stage: int | str = plr.stage
 
-# TODO: TEST VAR, REMOVE LATER
-tick_wait: int = 0
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -90,30 +95,23 @@ while True:
         start_time_i = pygame.time.get_ticks()
         dash_debounce = True
 
+    # restart if died
+    if keys[pygame.K_r] and plr.stage == "GAME_OVER":
+        plr.xcor, plr.ycor = (200, 730)
+        plr.grid_xcor, plr.grid_ycor = (1, 1)
+        plr.health = 10
+
     # DEBUG ROOM KEYBIND
     if keys[pygame.K_LCTRL] and keys[pygame.K_d] and plr.stage != "DEBUG":
         plr.xcor = 200
         plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 100
-        plr.stage = "DEBUG"
+        plr.grid_xcor, plr.grid_ycor = (-1, -1)
 
     # exit debug room
     if keys[pygame.K_LCTRL] and keys[pygame.K_a] and plr.stage == "DEBUG":
         plr.xcor = 200
         plr.ycor = Internal.SCREEN_HEIGHT - plr.height - 100
-        plr.stage = 1
-
-    # TODO: TEST KEYBINDS, REMOVE LATER
-    if keys[pygame.K_EQUALS] and not tick_wait:
-        plr.stage = 1 if isinstance(plr.stage, str) else plr.stage
-        plr.stage += 1
-        tick_wait = 10
-
-    if keys[pygame.K_MINUS] and not tick_wait:
-        plr.stage = 1 if isinstance(plr.stage, str) else plr.stage
-        plr.stage -= 1
-        tick_wait = 10
-
-    tick_wait -= 1 if tick_wait > 0 else 0
+        plr.grid_xcor, plr.grid_ycor = (1, 1)
 
     # exit game
     # maybe we'll add a menu later
@@ -132,22 +130,23 @@ while True:
 
     plr.draw(screen)
 
-    screen_objects[0].draw(screen)
+    screen_objects[1].draw(screen)
 
     # draw the objects if they are not None
-    if screen_objects[1]:
-        screen_objects[1].draw(screen)
     if screen_objects[2]:
         screen_objects[2].draw(screen)
+    if screen_objects[3]:
+        screen_objects[3].draw(screen)
 
-    stage_text = screen_objects[3]
+    stage_text = screen_objects[4]
     if stage_text:
-        screen.blit(
-            pygame.font.SysFont("8514oem", stage_text.size).render(
-                stage_text.msg, False, stage_text.color
-            ),
-            (stage_text.xcor + 50, stage_text.ycor),
-        )
+        for text in stage_text:
+            screen.blit(
+                pygame.font.SysFont("8514oem", text.size).render(
+                    text.msg, False, text.color
+                ),
+                (text.xcor + 50, text.ycor),
+            )
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 400:
         jump_debounce = False
