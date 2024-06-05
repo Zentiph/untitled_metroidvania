@@ -3,23 +3,25 @@
 Module for checking variable types and values.
 """
 
+from typing import Any, Type
+
 
 def check_type(
-    value: any,
+    value: Any,
     *expected_types: type,
     raise_exception: bool = True,
-    e_type: Exception = TypeError
+    e_type: Type[Exception] = TypeError,
 ) -> bool:
     """Checks if the given value is a member of one of the expected types.
 
     :param value: The value to check.
-    :type value: any
+    :type value: Any
     :param expected_types: The type(s) to match with the given value.
     :type expected_type: type
     :param raise_exception: Whether to raise an exception if the check fails.
     :type raise_exception: bool, optional
     :param e_type: The exception to raise if the check fails.
-    :type e_type: Exception, optional
+    :type e_type: Type[Exception], optional
     :return: Whether the given value is a member of one of the expected types.
     :rtype: bool
     """
@@ -35,21 +37,21 @@ def check_type(
 
 
 def check_value(
-    value: any,
-    *expected_values: any,
+    value: Any,
+    *expected_values: Any,
     raise_exception: bool = True,
-    e_type: Exception = ValueError
+    e_type: Type[Exception] = ValueError,
 ) -> bool:
     """Checks if the given value is equal to any of the expected values.
 
     :param value: The value to check.
-    :type value: any
+    :type value: Any
     :param expected_values: The value(s) to match with the given value.
-    :type expected_values: any
+    :type expected_values: Any
     :param raise_exception: Whether to raise an exception if the check fails.
     :type raise_exception: bool, optional
     :param e_type: The exception to raise if the check fails.
-    :type e_type: Exception, optional
+    :type e_type: Type[Exception], optional
     :return: Whether the given value is equal to one of the expected values.
     :rtype: bool
     """
@@ -69,7 +71,7 @@ def check_range(
     min_value: int | float,
     max_value: int | float,
     raise_exception: bool = True,
-    e_type: Exception = ValueError
+    e_type: Type[Exception] = ValueError,
 ) -> bool:
     """Checks if the given value is in the range of range(min_value, max_value).
 
@@ -82,7 +84,7 @@ def check_range(
     :param raise_exception: Whether to raise an exception if the check fails.
     :type raise_exception: bool, optional
     :param e_type: The exception to raise if the check fails.
-    :type e_type: Exception, optional
+    :type e_type: Type[Exception], optional
     :return: Whether the given value is in the range.
     :rtype: bool
     """
@@ -90,8 +92,6 @@ def check_range(
     in_range = min_value <= value <= max_value
     if not in_range:
         if raise_exception:
-            raise e_type(
-                f"{value} is not in range({min_value}, {max_value})"
-            )
+            raise e_type(f"{value} is not in range({min_value}, {max_value})")
         return False
     return True

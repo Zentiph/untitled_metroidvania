@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "blit",
+        "bottomleft",
+        "centerx",
         "colliderect",
         "cooldown",
         "gameloop",
@@ -8,7 +10,10 @@
         "hitbox",
         "hitboxes",
         "interp",
+        "KEYBIND",
         "Keybinds",
+        "KEYDOWN",
+        "LCTRL",
         "lerp",
         "Metroidvania",
         "pygame",
