@@ -27,7 +27,7 @@ pygame.display.set_caption("Untitled Metroidvania.")
 
 # setup the player to spawn in stage 1
 plr: Player.Player = Player.Player(
-    200,
+    Internal.SCREEN_WIDTH / 2 - 25,
     730,
     width=50,
     height=80,
@@ -56,9 +56,6 @@ dash_debounce: bool = False
 
 # the stage the player was in last frame
 previous_stage: int | str = plr.stage
-
-# TODO TEST STUFF, REMOVE LATER
-plr.grid_xcor, plr.grid_ycor = 5, 1
 
 # anything inside while True is the gameloop
 # this code executes each frame
@@ -130,8 +127,6 @@ while True:
     # redraw the updated items on the screen
     screen.fill((0, 0, 0))
 
-    plr.draw(screen)
-
     screen_objects[1].draw(screen)
 
     # draw the objects if they are not None
@@ -149,6 +144,8 @@ while True:
                 ),
                 (text.xcor + 50, text.ycor),
             )
+
+    plr.draw(screen)
 
     if jump_debounce and pygame.time.get_ticks() - start_time_j >= 200:
         jump_debounce = False

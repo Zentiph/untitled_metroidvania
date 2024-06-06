@@ -152,7 +152,7 @@ STAGE2: Tuple[
     Group(
         Platform(0, 800, 1600, 100),  # floor
         Platform(0, 0, 1600, 100),  # ceiling
-        Platform(0, 0, 100, 600),  # left wall
+        Platform(-50, 0, 150, 600),  # left wall
         Platform(1500, 0, 100, 600),  # right wall
         Platform(450, 700, 150, 150),  # bottom ledge left
         Platform(1000, 700, 150, 150),  # bottom ledge right
@@ -189,7 +189,7 @@ STAGE3: Tuple[
         Platform(0, 800, 450, 100),  # floor left side
         Platform(1100, 800, 500, 100),  # floor right side
         Platform(0, 0, 1600, 100),  # ceiling
-        Platform(0, 0, 150, 600),  # left wall
+        Platform(-50, 0, 150, 600),  # left wall
         Platform(1500, 0, 150, 600),  # right wall
         Platform(700, 600, 150, 300),  # center wall
         Platform(0, 850, 1600, 50),  # long floor
@@ -234,7 +234,7 @@ STAGE4: Tuple[
         Platform(0, 800, 300, 100),  # floor left side
         Platform(1300, 800, 300, 100),  # floor right side
         Platform(0, 0, 1600, 100),  # ceiling
-        Platform(0, 0, 150, 600),  # left wall
+        Platform(-50, 0, 150, 600),  # left wall
         Platform(1500, 0, 150, 600),  # right wall
         Platform(700, 750, 200, 100),  # center wall
         Platform(0, 850, 1600, 50),  # long floor
@@ -289,7 +289,7 @@ STAGE5: Tuple[
         Platform(0, 800, 550, 100),  # floor left side
         Platform(1300, 800, 300, 100),  # floor right side
         Platform(0, 0, 1600, 100),  # ceiling
-        Platform(0, 0, 150, 600),  # left wall
+        Platform(-50, 0, 150, 600),  # left wall
         Platform(1500, 0, 150, 600),  # right wall
         Platform(0, 500, 500, 100),  # left platform
         Platform(700, 700, 150, 200),  # middle platform
@@ -321,12 +321,145 @@ STAGE5: Tuple[
 STAGE6: Tuple[
     Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
 ] = (
-    # TODO: sam's level
+    # grid location
     (6, 1),
-    Group(),
+    # platforms
+    Group(
+        Platform(0, 800, 400, 100),  # floor
+        Platform(600, 800, 300, 100),  # floor
+        Platform(1100, 800, 500, 100),  # floor
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(-50, 0, 150, 600),  # left wall
+        Platform(1500, 300, 200, 600),  # right wall
+        Platform(1100, 0, 150, 600),  # middle wall
+        Platform(1450, 600, 150, 50),  # platform lower
+        Platform(1150, 500, 150, 50),  # platform middle
+        Platform(1450, 400, 150, 50),  # platform upper
+    ),
+    None,
+    Group(
+        Lava(400, 850, 200, 75),
+        Lava(900, 850, 200, 75),
+    ),
+    (
+        TextInfo(
+            'All "bugs" are "intentional" :)',
+            SCREEN_WIDTH / 2 - 600,
+            SCREEN_HEIGHT - 250,
+        ),
+    ),
+)
+
+STAGE7: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (7, 1),
+    # platforms
+    Group(
+        Platform(0, 700, 300, 200),  # left floor
+        Platform(1350, 800, 300, 100),  # right floor
+        Platform(0, 0, 400, 100),  # ceiling
+        Platform(-50, 300, 150, 600),  # left wall
+        Platform(1500, 0, 200, 600),  # right wall
+        Platform(1200, 0, 150, 900),  # middle wall
+        Platform(550, 550, 150, 150),  # lower platform
+        Platform(850, 350, 150, 150),  # middle platform
+        Platform(550, 150, 150, 150),  # upper platform
+    ),
+    None,
+    Group(Lava(300, 800, 900, 100)),
+    None,
+)
+
+STAGE8: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (7, 0),
+    # platforms
+    Group(
+        Platform(0, 0, 1600, 100),  # ceiling
+        Platform(-50, 0, 150, 800),  # left wall
+        Platform(1500, 0, 200, 900),  # right wall
+        Platform(1200, 300, 150, 600),  # middle wall
+        Platform(400, 300, 800, 100),  # upper platform
+        Platform(100, 450, 100, 100),  # upper box
+        Platform(500, 600, 100, 100),  # lower box
+        Platform(0, 800, 400, 200),  # floor
+    ),
+    Group(
+        # left spikes
+        Spike(550, 250, 50, 50),
+        Spike(600, 250, 50, 50),
+        Spike(650, 250, 50, 50),
+        Spike(700, 250, 50, 50),
+        # right spikes
+        Spike(1000, 250, 50, 50),
+        Spike(1050, 250, 50, 50),
+        Spike(1100, 250, 50, 50),
+        Spike(1150, 250, 50, 50),
+    ),
+    None,
+    (TextInfo("Dash with SHIFT", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT - 450),),
+)
+
+STAGE9: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (8, 1),
+    # platforms
+    Group(
+        Platform(300, 0, 1300, 100),  # ceiling
+        Platform(-50, 0, 150, 600),  # left wall
+        Platform(1500, 0, 200, 900),  # right wall
+        Platform(500, 600, 350, 100),  # lower dash platform
+        Platform(500, 300, 800, 100),  # upper dash platform
+        Platform(1100, 600, 400, 100),  # right platform
+        Platform(1400, 500, 150, 100),  # right platform elevated ledge
+        Platform(50, 300, 150, 100),  # left wall ledge
+        Platform(0, 200, 150, 100),
+        Platform(0, 800, 300, 200),  # floor
+    ),
+    Group(
+        # bottom spikes
+        Spike(650, 550, 50, 50),
+        Spike(700, 550, 50, 50),
+        Spike(750, 550, 50, 50),
+        Spike(800, 550, 50, 50),
+        # upper right spikes
+        Spike(1000, 250, 50, 50),
+        Spike(1050, 250, 50, 50),
+        Spike(1100, 250, 50, 50),
+        Spike(1150, 250, 50, 50),
+        # upper left spikes
+        Spike(500, 250, 50, 50),
+        Spike(550, 250, 50, 50),
+    ),
+    Group(Lava(300, 850, 1200, 50)),
+    None,
+)
+
+STAGE10: Tuple[
+    Tuple[int, int], Group, Group | None, Group | None, Tuple[TextInfo, ...] | None
+] = (
+    # grid location
+    (8, 0),
+    # platforms
+    Group(
+        Platform(300, 800, 1300, 100),  # floor
+        Platform(-50, 0, 150, 900),  # left wall
+        Platform(1500, 0, 200, 900),  # right wall
+        Platform(0, 0, 1600, 100),  # ceiling
+    ),
     None,
     None,
-    None,
+    (
+        TextInfo(
+            "you won congrats i guess", SCREEN_WIDTH / 2 - 500, SCREEN_HEIGHT / 2 - 50
+        ),
+    ),
 )
 
 STAGES: Dict[
@@ -345,6 +478,10 @@ STAGES: Dict[
     4: STAGE4,
     5: STAGE5,
     6: STAGE6,
+    7: STAGE7,
+    8: STAGE8,
+    9: STAGE9,
+    10: STAGE10,
 }
 
 
